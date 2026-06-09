@@ -84,7 +84,7 @@ const breadcrumbSchema = {
   </div>
 
   <!-- Calculator -->
-  <Calculator defaultSystemId={u.gradingSystemId} />
+  <Calculator defaultSystemId={u.gradingSystemId} universitySlug={u.slug} country={u.country} />
 
   <!-- Grading System Section -->
   {gradingSystem && (

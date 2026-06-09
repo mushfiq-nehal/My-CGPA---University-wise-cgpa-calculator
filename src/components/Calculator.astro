@@ -3,8 +3,10 @@ import { ALL_GRADING_SYSTEMS, UGC_BANGLADESH } from '../data/gradingSystems';
 
 interface Props {
   defaultSystemId?: string;
+  universitySlug?: string;
+  country?: string;
 }
-const { defaultSystemId = 'ugc-bd' } = Astro.props;
+const { defaultSystemId = 'ugc-bd', universitySlug = '', country = '' } = Astro.props;
 const defaultSystem = ALL_GRADING_SYSTEMS.find(s => s.id === defaultSystemId) ?? UGC_BANGLADESH;
 const systemsJson = JSON.stringify(ALL_GRADING_SYSTEMS);
 ---
@@ -27,8 +29,11 @@ const systemsJson = JSON.stringify(ALL_GRADING_SYSTEMS);
           <button class="mode-tab" role="tab" aria-selected="false" aria-controls="panel-cgpa" id="tab-cgpa" data-mode="cgpa">
             CGPA Calculator
           </button>
+          <button class="mode-tab" role="tab" aria-selected="false" aria-controls="panel-converter" id="tab-converter" data-mode="converter">
+            Percentage Converter
+          </button>
         </div>
-        <div class="system-selector-wrap">
+        <div class="system-selector-wrap" id="system-selector-wrap">
           <label for="grading-system-select" class="system-label">Grading System</label>
           <select class="system-select" id="grading-system-select" aria-label="Select grading system">
             {ALL_GRADING_SYSTEMS.map(s => (
@@ -62,9 +67,21 @@ const systemsJson = JSON.stringify(ALL_GRADING_SYSTEMS);
         <div class="result-display" id="gpa-result" aria-live="polite" aria-label="Semester GPA result">
           <div class="result-inner">
             <span class="result-label">Semester GPA</span>
-            <span class="result-value" id="gpa-value">—</span>
-            <span class="result-scale" id="gpa-scale">/ 4.00</span>
+            <div class="result-value-wrap">
+              <span class="result-value" id="gpa-value">—</span>
+              <span class="result-scale" id="gpa-scale">/ 4.00</span>
+            </div>
           </div>
+        </div>
+        <div class="calc-actions">
+          <button class="btn-download" id="download-gpa-btn" style="display: none;" title="Download Detailed PDF Report">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            Download Detailed PDF Report
+          </button>
         </div>
       </div>
 
@@ -76,30 +93,110 @@ const systemsJson = JSON.stringify(ALL_GRADING_SYSTEMS);
               <tr>
                 <th scope="col">Semester</th>
                 <th scope="col">GPA</th>
-                <th scope="col">Credit Hours</th>
+                <th scope="col">{universitySlug === 'bteb-diploma-cgpa-calculator' ? 'Weightage (%)' : 'Credit Hours'}</th>
                 <th scope="col" aria-label="Remove row"></th>
               </tr>
             </thead>
             <tbody id="cgpa-rows"></tbody>
           </table>
         </div>
-        <button class="add-row-btn" id="add-semester-btn" aria-label="Add a new semester">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-            <path d="M7 2V12M2 7H12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
-          Add Semester
-        </button>
+        {universitySlug !== 'bteb-diploma-cgpa-calculator' && (
+          <button class="add-row-btn" id="add-semester-btn" aria-label="Add a new semester">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M7 2V12M2 7H12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            Add Semester
+          </button>
+        )}
         <div class="result-display" id="cgpa-result" aria-live="polite" aria-label="CGPA result">
           <div class="result-inner">
             <span class="result-label">Cumulative GPA (CGPA)</span>
-            <span class="result-value" id="cgpa-value">—</span>
-            <span class="result-scale" id="cgpa-scale">/ 4.00</span>
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">
+              <div class="result-value-wrap">
+                <span class="result-value" id="cgpa-value">—</span>
+                <span class="result-scale" id="cgpa-scale">/ 4.00</span>
+              </div>
+              <div id="cgpa-extra-info" class="caption-mono" style="font-size: 12px; color: var(--color-mute); display: none;"></div>
+            </div>
+          </div>
+        </div>
+        <div class="calc-actions">
+          <button class="btn-download" id="download-cgpa-btn" style="display: none;" title="Download Detailed PDF Report">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            Download Detailed PDF Report
+          </button>
+        </div>
+      </div>
+
+      <!-- Percentage Converter Panel -->
+      <div class="calc-panel calc-panel--hidden" id="panel-converter" role="tabpanel" aria-labelledby="tab-converter" hidden>
+        <div class="converter-grid">
+          <div class="converter-inputs">
+            <!-- Conversion Direction -->
+            <div class="input-group">
+              <label for="converter-direction" class="field-label">Conversion Mode</label>
+              <select class="form-select" id="converter-direction" aria-label="Select conversion mode">
+                <option value="percentage-to-cgpa">Percentage (%) to CGPA</option>
+                <option value="cgpa-to-percentage">CGPA to Percentage (%)</option>
+              </select>
+            </div>
+
+            <!-- Country Selection -->
+            <div class="input-group">
+              <label for="converter-country" class="field-label">Country</label>
+              <select class="form-select" id="converter-country" aria-label="Select country">
+                <option value="BD" selected={country === 'BD'}>Bangladesh</option>
+                <option value="IN" selected={country === 'IN' || (!country && true)}>India</option>
+                <option value="PK" selected={country === 'PK'}>Pakistan</option>
+              </select>
+            </div>
+
+            <!-- University Selection -->
+            <div class="input-group">
+              <label for="converter-univ" class="field-label">University / Standard Scale</label>
+              <select class="form-select" id="converter-univ" aria-label="Select university or standard scale"></select>
+            </div>
+
+            <!-- Value Input -->
+            <div class="input-group">
+              <label for="converter-input-val" id="converter-input-label" class="field-label">Percentage (%)</label>
+              <input type="number" id="converter-input-val" min="0" max="100" step="0.01" placeholder="e.g. 75.00" class="form-input" aria-label="Input value" />
+            </div>
+          </div>
+
+          <!-- Result Display Card -->
+          <div class="converter-result-card">
+            <div class="result-inner" style="display: flex; flex-direction: column; align-items: flex-start; gap: var(--spacing-xs); width: 100%;">
+              <span class="result-label" id="converter-result-title" style="margin-right: 0;">Converted CGPA</span>
+              <div class="result-value-wrap" style="display: flex; align-items: baseline; gap: var(--spacing-xs);">
+                <span class="result-value" id="converter-result-val">—</span>
+                <span class="result-scale" id="converter-result-scale">/ 10.00</span>
+              </div>
+            </div>
+            <div class="formula-box">
+              <span class="formula-title">Formula Used:</span>
+              <p class="formula-text" id="converter-formula-text">Select a university and enter a value to see the formula.</p>
+            </div>
+            <div class="calc-actions" style="margin-top: auto; padding-top: var(--spacing-md); border-top: 1px solid var(--color-hairline);">
+              <button class="btn-download" id="download-converter-btn" style="display: none;" title="Download Detailed PDF Report">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="7 10 12 15 17 10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                Download Detailed PDF Report
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Grading Table Toggle -->
-      <div class="grading-table-section">
+      <div class="grading-table-section" id="grading-table-section">
         <button class="grading-toggle-btn" id="grading-toggle-btn" aria-expanded="false" aria-controls="grading-table-wrap">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true" class="toggle-arrow">
             <path d="M3.5 5.5L7 9L10.5 5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -372,6 +469,12 @@ const systemsJson = JSON.stringify(ALL_GRADING_SYSTEMS);
     margin-right: auto;
   }
 
+  .result-value-wrap {
+    display: flex;
+    align-items: baseline;
+    gap: var(--spacing-xs);
+  }
+
   .result-value {
     font-size: 40px;
     font-weight: 600;
@@ -387,6 +490,59 @@ const systemsJson = JSON.stringify(ALL_GRADING_SYSTEMS);
     color: var(--color-mute);
     align-self: flex-end;
     padding-bottom: 4px;
+  }
+
+  .btn-download {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 var(--spacing-sm);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-body);
+    background: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    letter-spacing: -0.28px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  }
+
+  .btn-download:hover {
+    background: var(--color-canvas-soft-2);
+    color: var(--color-ink);
+    border-color: var(--color-hairline-strong);
+    transform: translateY(-1px);
+  }
+
+  .btn-download:active {
+    transform: translateY(0);
+  }
+
+  .btn-download svg {
+    flex-shrink: 0;
+    color: var(--color-mute);
+    transition: color 0.15s;
+  }
+
+  .btn-download:hover svg {
+    color: var(--color-ink);
+  }
+
+  .calc-actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .calc-actions:has(> button:not([style*="display: none"])) {
+    margin-top: var(--spacing-md);
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
   }
 
   .grading-table-section {
@@ -435,6 +591,106 @@ const systemsJson = JSON.stringify(ALL_GRADING_SYSTEMS);
     font-weight: 400;
   }
 
+  .calc-panel[hidden] {
+    display: none !important;
+  }
+
+  .converter-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+    align-items: stretch;
+  }
+
+  .converter-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+
+  .field-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-mute);
+    letter-spacing: -0.2px;
+    text-transform: uppercase;
+  }
+
+  .form-select,
+  .form-input {
+    width: 100%;
+    height: 40px;
+    padding: 0 var(--spacing-sm);
+    font-size: 14px;
+    font-family: var(--font-sans);
+    color: var(--color-ink);
+    background: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-sm);
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .form-select:focus,
+  .form-input:focus {
+    border-color: var(--color-ink);
+    box-shadow: 0 0 0 2px var(--color-canvas-soft-2);
+  }
+
+  .converter-result-card {
+    background: var(--color-canvas-soft);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg) var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+  }
+
+  .result-value-wrap {
+    display: flex;
+    align-items: baseline;
+    gap: var(--spacing-xs);
+  }
+
+  .formula-box {
+    border-top: 1px solid var(--color-hairline);
+    padding-top: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+
+  .formula-title {
+    font-size: 11px;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    color: var(--color-mute);
+    letter-spacing: 0.05em;
+  }
+
+  .formula-text {
+    font-size: 13px;
+    font-family: var(--font-mono);
+    color: var(--color-ink);
+    margin: 0;
+    line-height: 1.4;
+    word-break: break-all;
+  }
+
+  @media (max-width: 768px) {
+    .converter-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
   @media (max-width: 599px) {
     .calc-controls {
       flex-direction: column;
@@ -443,11 +699,24 @@ const systemsJson = JSON.stringify(ALL_GRADING_SYSTEMS);
 
     .result-value { font-size: 32px; }
   }
+
+  /* (Removed print media queries as direct PDF downloads are handled via jsPDF) */
 </style>
 
-<script define:vars={{ systemsJson, defaultSystemId }}>
+<script define:vars={{ systemsJson, defaultSystemId, universitySlug }}>
   const SYSTEMS = JSON.parse(systemsJson);
   let currentSystemId = defaultSystemId;
+  const isBteb = universitySlug === 'bteb-diploma-cgpa-calculator';
+  const BTEB_SEMESTERS = [
+    { name: '1st Semester (5%)', credits: '5' },
+    { name: '2nd Semester (5%)', credits: '5' },
+    { name: '3rd Semester (5%)', credits: '5' },
+    { name: '4th Semester (10%)', credits: '10' },
+    { name: '5th Semester (20%)', credits: '20' },
+    { name: '6th Semester (20%)', credits: '20' },
+    { name: '7th Semester (20%)', credits: '20' },
+    { name: '8th Semester (15%)', credits: '15' }
+  ];
 
   function getSystem() {
     return SYSTEMS.find(s => s.id === currentSystemId) ?? SYSTEMS[0];
@@ -460,19 +729,20 @@ const systemsJson = JSON.stringify(ALL_GRADING_SYSTEMS);
     ).join('');
   }
 
-  // ── GPA Mode ───────────────────────────────────────────────────────────────
+  // ── GPA Mode (with LocalStorage) ───────────────────────────────────────────
   let gpaRowCount = 0;
 
-  function addGpaRow() {
+  function addGpaRow(name = '', credits = '3', gradeVal = '') {
     gpaRowCount++;
     const tbody = document.getElementById('gpa-rows');
+    if (!tbody) return;
     const id = `gpa-row-${gpaRowCount}`;
     const tr = document.createElement('tr');
     tr.id = id;
     tr.innerHTML = `
-      <td><input type="text" placeholder="e.g. Mathematics" aria-label="Course name" value="" /></td>
-      <td><input type="number" min="0.5" max="6" step="0.5" value="3" aria-label="Credit hours" /></td>
-      <td><select aria-label="Grade">${buildGradeOptions('')}</select></td>
+      <td><input type="text" placeholder="e.g. Mathematics" aria-label="Course name" value="${name}" /></td>
+      <td><input type="number" min="0.5" max="6" step="0.5" value="${credits}" aria-label="Credit hours" /></td>
+      <td><select aria-label="Grade">${buildGradeOptions(gradeVal)}</select></td>
       <td>
         <button class="remove-row-btn" data-target="${id}" aria-label="Remove course">
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -482,10 +752,14 @@ const systemsJson = JSON.stringify(ALL_GRADING_SYSTEMS);
       </td>
     `;
     tbody.appendChild(tr);
-    tr.querySelectorAll('input, select').forEach(el => el.addEventListener('change', calcGpa));
+    tr.querySelectorAll('input, select').forEach(el => el.addEventListener('change', () => {
+      calcGpa();
+      saveGpaState();
+    }));
     tr.querySelector('.remove-row-btn').addEventListener('click', (e) => {
       document.getElementById(e.currentTarget.dataset.target)?.remove();
       calcGpa();
+      saveGpaState();
     });
     calcGpa();
   }
@@ -494,7 +768,8 @@ const systemsJson = JSON.stringify(ALL_GRADING_SYSTEMS);
     const rows = document.querySelectorAll('#gpa-rows tr');
     let totalPoints = 0, totalCredits = 0;
     rows.forEach(row => {
-      const credits = parseFloat(row.querySelectorAll('input')[1]?.value) || 0;
+      const inputs = row.querySelectorAll('input');
+      const credits = parseFloat(inputs[1]?.value) || 0;
       const gradePoint = parseFloat(row.querySelector('select')?.value) || 0;
       if (credits > 0) {
         totalPoints += credits * gradePoint;
@@ -506,36 +781,88 @@ const systemsJson = JSON.stringify(ALL_GRADING_SYSTEMS);
     const scale = document.getElementById('gpa-scale');
     if (el) el.textContent = gpa !== null ? gpa.toFixed(2) : '—';
     if (scale) scale.textContent = `/ ${getSystem().maxGPA.toFixed(2)}`;
+    
+    const downloadBtn = document.getElementById('download-gpa-btn');
+    if (downloadBtn) {
+      downloadBtn.style.display = gpa !== null ? 'inline-flex' : 'none';
+    }
   }
 
-  // ── CGPA Mode ──────────────────────────────────────────────────────────────
+  function saveGpaState() {
+    const rows = document.querySelectorAll('#gpa-rows tr');
+    const data = [];
+    rows.forEach(row => {
+      const inputs = row.querySelectorAll('input');
+      const select = row.querySelector('select');
+      data.push({
+        name: inputs[0]?.value || '',
+        credits: inputs[1]?.value || '3',
+        gradeVal: select?.value || ''
+      });
+    });
+    localStorage.setItem(`mycgpa:gpa-courses:${currentSystemId}`, JSON.stringify(data));
+  }
+
+  function loadGpaState() {
+    const tbody = document.getElementById('gpa-rows');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    const stored = localStorage.getItem(`mycgpa:gpa-courses:${currentSystemId}`);
+    if (stored) {
+      try {
+        const data = JSON.parse(stored);
+        if (data && data.length > 0) {
+          data.forEach(item => addGpaRow(item.name, item.credits, item.gradeVal));
+          return;
+        }
+      } catch (e) {
+        console.error('Error parsing stored GPA state', e);
+      }
+    }
+    // Fallback default rows
+    addGpaRow(); addGpaRow(); addGpaRow();
+  }
+
+  // ── CGPA Mode (with LocalStorage) ──────────────────────────────────────────
   let cgpaRowCount = 0;
 
-  function addCgpaRow() {
+  function addCgpaRow(name = '', gpa = '', credits = '15') {
     cgpaRowCount++;
     const tbody = document.getElementById('cgpa-rows');
+    if (!tbody) return;
     const id = `cgpa-row-${cgpaRowCount}`;
     const tr = document.createElement('tr');
     tr.id = id;
-    const semLabel = `Semester ${cgpaRowCount}`;
+    const semLabel = name || `Semester ${cgpaRowCount}`;
+
+    const readonlyAttr = isBteb ? 'readonly tabindex="-1"' : '';
+    const styleAttr = isBteb ? 'style="border: none; background: transparent; pointer-events: none; padding-inline: 0; outline: none; box-shadow: none; font-weight: 500;"' : '';
+    const removeBtnHtml = isBteb ? '' : `
+      <button class="remove-row-btn" data-target="${id}" aria-label="Remove semester">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M2 2L10 10M10 2L2 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+    `;
+
     tr.innerHTML = `
-      <td><input type="text" value="${semLabel}" aria-label="Semester name" /></td>
-      <td><input type="number" min="0" max="${getSystem().maxGPA}" step="0.01" placeholder="3.50" aria-label="Semester GPA" /></td>
-      <td><input type="number" min="1" max="30" step="0.5" value="15" aria-label="Credit hours" /></td>
-      <td>
-        <button class="remove-row-btn" data-target="${id}" aria-label="Remove semester">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-            <path d="M2 2L10 10M10 2L2 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
-        </button>
-      </td>
+      <td><input type="text" value="${semLabel}" aria-label="Semester name" ${readonlyAttr} ${styleAttr} /></td>
+      <td><input type="number" min="0" max="${getSystem().maxGPA}" step="0.01" value="${gpa}" placeholder="3.50" aria-label="Semester GPA" /></td>
+      <td><input type="number" min="1" max="30" step="0.5" value="${credits}" aria-label="Weightage" ${readonlyAttr} ${styleAttr} /></td>
+      <td>${removeBtnHtml}</td>
     `;
     tbody.appendChild(tr);
-    tr.querySelectorAll('input').forEach(el => el.addEventListener('input', calcCgpa));
-    tr.querySelector('.remove-row-btn').addEventListener('click', (e) => {
-      document.getElementById(e.currentTarget.dataset.target)?.remove();
+    tr.querySelectorAll('input').forEach(el => el.addEventListener('input', () => {
       calcCgpa();
-    });
+      saveCgpaState();
+    }));
+    if (!isBteb) {
+      tr.querySelector('.remove-row-btn').addEventListener('click', (e) => {
+        document.getElementById(e.currentTarget.dataset.target)?.remove();
+        calcCgpa();
+        saveCgpaState();
+      });
+    }
     calcCgpa();
   }
 
@@ -556,6 +883,81 @@ const systemsJson = JSON.stringify(ALL_GRADING_SYSTEMS);
     const scale = document.getElementById('cgpa-scale');
     if (el) el.textContent = cgpa !== null ? cgpa.toFixed(2) : '—';
     if (scale) scale.textContent = `/ ${getSystem().maxGPA.toFixed(2)}`;
+
+    const extraInfoEl = document.getElementById('cgpa-extra-info');
+    if (extraInfoEl) {
+      if (isBteb && cgpa !== null) {
+        let division = '';
+        if (cgpa >= 3.00) division = 'First Class';
+        else if (cgpa >= 2.25) division = 'Second Class';
+        else if (cgpa >= 2.00) division = 'Third Class';
+        else division = 'Fail';
+        extraInfoEl.textContent = `Division: ${division}`;
+        extraInfoEl.style.display = 'block';
+      } else {
+        extraInfoEl.style.display = 'none';
+        extraInfoEl.textContent = '';
+      }
+    }
+
+    const downloadBtn = document.getElementById('download-cgpa-btn');
+    if (downloadBtn) {
+      downloadBtn.style.display = cgpa !== null ? 'inline-flex' : 'none';
+    }
+  }
+
+  function saveCgpaState() {
+    const rows = document.querySelectorAll('#cgpa-rows tr');
+    const data = [];
+    rows.forEach(row => {
+      const inputs = row.querySelectorAll('input');
+      data.push({
+        name: inputs[0]?.value || '',
+        gpa: inputs[1]?.value || '',
+        credits: inputs[2]?.value || '15'
+      });
+    });
+    localStorage.setItem(`mycgpa:cgpa-semesters:${currentSystemId}`, JSON.stringify(data));
+  }
+
+  function loadCgpaState() {
+    const tbody = document.getElementById('cgpa-rows');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    if (isBteb) {
+      const stored = localStorage.getItem(`mycgpa:cgpa-semesters:${currentSystemId}`);
+      let savedGPAs = [];
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed)) {
+            savedGPAs = parsed.map(item => item.gpa || '');
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+      BTEB_SEMESTERS.forEach((sem, idx) => {
+        addCgpaRow(sem.name, savedGPAs[idx] || '', sem.credits);
+      });
+      return;
+    }
+
+    const stored = localStorage.getItem(`mycgpa:cgpa-semesters:${currentSystemId}`);
+    if (stored) {
+      try {
+        const data = JSON.parse(stored);
+        if (data && data.length > 0) {
+          data.forEach(item => addCgpaRow(item.name, item.gpa, item.credits));
+          return;
+        }
+      } catch (e) {
+        console.error('Error parsing stored CGPA state', e);
+      }
+    }
+    // Fallback default rows
+    addCgpaRow(); addCgpaRow();
   }
 
   // ── Grading System Switch ──────────────────────────────────────────────────
@@ -574,24 +976,175 @@ const systemsJson = JSON.stringify(ALL_GRADING_SYSTEMS);
     const nameEl = document.getElementById('grading-system-name');
     if (nameEl) nameEl.textContent = sys.name;
 
-    // Rebuild grade dropdowns in GPA table keeping current credit values
-    document.querySelectorAll('#gpa-rows tr').forEach(row => {
-      const select = row.querySelector('select');
-      if (select) select.innerHTML = buildGradeOptions('');
-    });
-
-    // Update CGPA GPA max
-    document.querySelectorAll('#cgpa-rows tr input[type="number"]:nth-child(2)').forEach(inp => {
-      inp.max = sys.maxGPA;
-    });
-
-    calcGpa();
-    calcCgpa();
-
-    // Update scale displays
-    document.getElementById('gpa-scale').textContent = `/ ${sys.maxGPA.toFixed(2)}`;
-    document.getElementById('cgpa-scale').textContent = `/ ${sys.maxGPA.toFixed(2)}`;
+    // Load state from local storage or defaults for this grading system
+    loadGpaState();
+    loadCgpaState();
   }
+
+  // ── Percentage Converter Mode ──────────────────────────────────────────────
+  const CONVERTER_DATA = {
+    BD: [
+      { id: 'standard-ugc', name: 'Standard UGC scale (CGPA / 4.0 × 100)', maxCGPA: 4.0, type: 'prop', factor: 25, formula: '(CGPA / 4.0) × 100' },
+      { id: 'du-cgpa-calculator', name: 'Dhaka University (DU)', maxCGPA: 4.0, type: 'prop', factor: 25, formula: '(CGPA / 4.0) × 100' },
+      { id: 'buet-cgpa-calculator', name: 'BUET / RUET / KUET / CUET', maxCGPA: 4.0, type: 'prop', factor: 25, formula: '(CGPA / 4.0) × 100' },
+      { id: 'brac-cgpa-calculator', name: 'BRAC University', maxCGPA: 4.0, type: 'prop', factor: 25, formula: '(CGPA / 4.0) × 100' },
+      { id: 'nsu-cgpa-calculator', name: 'North South University (NSU)', maxCGPA: 4.0, type: 'prop', factor: 25, formula: '(CGPA / 4.0) × 100' },
+      { id: 'iub-cgpa-calculator', name: 'Independent University, Bangladesh (IUB)', maxCGPA: 4.0, type: 'prop', factor: 25, formula: '(CGPA / 4.0) × 100' },
+      { id: 'uiu-cgpa-calculator', name: 'United International University (UIU)', maxCGPA: 4.0, type: 'prop', factor: 25, formula: '(CGPA / 4.0) × 100' },
+      { id: 'nu-cgpa-calculator', name: 'National University (NU)', maxCGPA: 4.0, type: 'prop', factor: 25, formula: '(CGPA / 4.0) × 100' }
+    ],
+    IN: [
+      { id: 'standard-cbse', name: 'Standard CBSE / UGC (CGPA × 9.5)', maxCGPA: 10.0, type: 'mul', factor: 9.5, formula: 'CGPA × 9.5' },
+      { id: 'aicte', name: 'AICTE Standard ((CGPA - 0.75) × 10)', maxCGPA: 10.0, type: 'aicte', formula: '(CGPA - 0.75) × 10' },
+      { id: 'vit-cgpa-calculator', name: 'Vellore Institute of Technology (VIT)', maxCGPA: 10.0, type: 'mul', factor: 10, formula: 'CGPA × 10' },
+      { id: 'srm-cgpa-calculator', name: 'SRM Institute of Science & Tech', maxCGPA: 10.0, type: 'mul', factor: 10, formula: 'CGPA × 10' },
+      { id: 'ktu-cgpa-calculator', name: 'APJ Abdul Kalam Tech Univ (KTU)', maxCGPA: 10.0, type: 'mul', factor: 10, formula: 'CGPA × 10' },
+      { id: 'ipu-cgpa-calculator', name: 'GGSIPU (IPU)', maxCGPA: 10.0, type: 'mul', factor: 10, formula: 'CGPA × 10' },
+      { id: 'saveetha-cgpa-calculator', name: 'Saveetha University (SIMATS)', maxCGPA: 10.0, type: 'mul', factor: 10, formula: 'CGPA × 10' }
+    ],
+    PK: [
+      { id: 'standard-hec', name: 'Standard HEC / Proportional Scale', maxCGPA: 4.0, type: 'prop', factor: 25, formula: '(CGPA / 4.0) × 100' },
+      { id: 'nust-cgpa-calculator', name: 'National Univ of Sciences & Tech (NUST)', maxCGPA: 4.0, type: 'prop', factor: 25, formula: '(CGPA / 4.0) × 100' },
+      { id: 'comsats-cgpa-calculator', name: 'COMSATS University Islamabad', maxCGPA: 4.0, type: 'prop', factor: 25, formula: '(CGPA / 4.0) × 100' },
+      { id: 'umt-cgpa-calculator', name: 'University of Management & Tech (UMT)', maxCGPA: 4.0, type: 'prop', factor: 25, formula: '(CGPA / 4.0) × 100' },
+      { id: 'ucp-cgpa-calculator', name: 'University of Central Punjab (UCP)', maxCGPA: 4.0, type: 'prop', factor: 25, formula: '(CGPA / 4.0) × 100' },
+      { id: 'uol-cgpa-calculator', name: 'University of Lahore (UOL)', maxCGPA: 4.0, type: 'prop', factor: 25, formula: '(CGPA / 4.0) × 100' },
+      { id: 'pu-cgpa-calculator', name: 'University of the Punjab (PU)', maxCGPA: 4.0, type: 'prop', factor: 25, formula: '(CGPA / 4.0) × 100' },
+      { id: 'uog-cgpa-calculator', name: 'University of Gujrat (UOG)', maxCGPA: 4.0, type: 'prop', factor: 25, formula: '(CGPA / 4.0) × 100' }
+    ]
+  };
+
+  const directionSelect = document.getElementById('converter-direction');
+  const countrySelect = document.getElementById('converter-country');
+  const univSelect = document.getElementById('converter-univ');
+  const valueInput = document.getElementById('converter-input-val');
+  const resultVal = document.getElementById('converter-result-val');
+  const resultScale = document.getElementById('converter-result-scale');
+  const resultTitle = document.getElementById('converter-result-title');
+  const inputLabel = document.getElementById('converter-input-label');
+  const formulaText = document.getElementById('converter-formula-text');
+
+  function getSelectedUniv() {
+    const country = countrySelect.value;
+    const univId = univSelect.value;
+    return CONVERTER_DATA[country]?.find(u => u.id === univId) || CONVERTER_DATA[country]?.[0];
+  }
+
+  function updateUniversities() {
+    const country = countrySelect.value;
+    const list = CONVERTER_DATA[country] || [];
+    univSelect.innerHTML = list.map(u => `<option value="${u.id}">${u.name}</option>`).join('');
+
+    // Pre-select current university if applicable
+    let matchId = '';
+    if (universitySlug) {
+      if (['ruet-cgpa-calculator', 'kuet-cgpa-calculator', 'cuet-cgpa-calculator', 'buet-cgpa-calculator'].includes(universitySlug)) {
+        matchId = 'buet-cgpa-calculator';
+      } else {
+        matchId = universitySlug;
+      }
+    }
+
+    if (matchId && list.some(u => u.id === matchId)) {
+      univSelect.value = matchId;
+    }
+
+    updateConverterUI();
+  }
+
+  function updateConverterUI() {
+    const direction = directionSelect.value;
+    const univ = getSelectedUniv();
+    if (!univ) return;
+
+    if (direction === 'percentage-to-cgpa') {
+      inputLabel.textContent = 'Percentage (%)';
+      valueInput.placeholder = 'e.g. 75.00';
+      valueInput.min = '0';
+      valueInput.max = '100';
+      resultTitle.textContent = 'Converted CGPA';
+      resultScale.textContent = `/ ${univ.maxCGPA.toFixed(2)}`;
+    } else {
+      inputLabel.textContent = 'CGPA';
+      valueInput.placeholder = `e.g. ${(univ.maxCGPA * 0.75).toFixed(2)}`;
+      valueInput.min = '0';
+      valueInput.max = univ.maxCGPA.toString();
+      resultTitle.textContent = 'Converted Percentage';
+      resultScale.textContent = '%';
+    }
+
+    runConversion();
+  }
+
+  function runConversion() {
+    const direction = directionSelect.value;
+    const univ = getSelectedUniv();
+    const inputValStr = valueInput.value.trim();
+    if (!univ || inputValStr === '') {
+      resultVal.textContent = '—';
+      formulaText.textContent = 'Enter a value to see the calculation details.';
+      return;
+    }
+
+    const inputVal = parseFloat(inputValStr);
+    if (isNaN(inputVal) || inputVal < 0) {
+      resultVal.textContent = 'Invalid';
+      formulaText.textContent = 'Please enter a valid non-negative number.';
+      return;
+    }
+
+    let calculated = 0;
+    let equation = '';
+
+    if (direction === 'percentage-to-cgpa') {
+      // Input is percentage, convert to CGPA
+      // Clamp percentage to 100
+      const pct = Math.min(inputVal, 100);
+      if (univ.type === 'mul') {
+        calculated = pct / univ.factor;
+        equation = `CGPA = Percentage / ${univ.factor}\n${pct.toFixed(2)} / ${univ.factor} = ${calculated.toFixed(2)}`;
+      } else if (univ.type === 'aicte') {
+        calculated = (pct / 10) + 0.75;
+        equation = `CGPA = (Percentage / 10) + 0.75\n(${pct.toFixed(2)} / 10) + 0.75 = ${calculated.toFixed(2)}`;
+      } else if (univ.type === 'prop') {
+        calculated = (pct / 100) * 4.0;
+        equation = `CGPA = (Percentage / 100) * 4.0\n(${pct.toFixed(2)} / 100) * 4.0 = ${calculated.toFixed(2)}`;
+      }
+      // Clamp CGPA result to maxCGPA
+      calculated = Math.min(calculated, univ.maxCGPA);
+      resultVal.textContent = calculated.toFixed(2);
+    } else {
+      // Input is CGPA, convert to percentage
+      // Clamp CGPA to maxCGPA
+      const cgpa = Math.min(inputVal, univ.maxCGPA);
+      if (univ.type === 'mul') {
+        calculated = cgpa * univ.factor;
+        equation = `Percentage = CGPA * ${univ.factor}\n${cgpa.toFixed(2)} × ${univ.factor} = ${calculated.toFixed(2)}%`;
+      } else if (univ.type === 'aicte') {
+        calculated = (cgpa - 0.75) * 10;
+        calculated = Math.max(0, calculated); // avoid negative percentage
+        equation = `Percentage = (CGPA - 0.75) × 10\n(${cgpa.toFixed(2)} - 0.75) × 10 = ${calculated.toFixed(2)}%`;
+      } else if (univ.type === 'prop') {
+        calculated = (cgpa / 4.0) * 100;
+        equation = `Percentage = (CGPA / 4.0) × 100\n(${cgpa.toFixed(2)} / 4.0) × 100 = ${calculated.toFixed(2)}%`;
+      }
+      // Clamp percentage to 100
+      calculated = Math.min(calculated, 100);
+      resultVal.textContent = calculated.toFixed(2);
+    }
+
+    formulaText.textContent = equation;
+
+    const downloadBtn = document.getElementById('download-converter-btn');
+    if (downloadBtn) {
+      downloadBtn.style.display = (resultVal.textContent !== '—' && resultVal.textContent !== 'Invalid') ? 'inline-flex' : 'none';
+    }
+  }
+
+  directionSelect?.addEventListener('change', updateConverterUI);
+  countrySelect?.addEventListener('change', updateUniversities);
+  univSelect?.addEventListener('change', updateConverterUI);
+  valueInput?.addEventListener('input', runConversion);
 
   // ── Mode Tabs ──────────────────────────────────────────────────────────────
   document.querySelectorAll('.mode-tab').forEach(btn => {
@@ -606,12 +1159,29 @@ const systemsJson = JSON.stringify(ALL_GRADING_SYSTEMS);
 
       const gpaPanel = document.getElementById('panel-gpa');
       const cgpaPanel = document.getElementById('panel-cgpa');
+      const converterPanel = document.getElementById('panel-converter');
+      const systemSelector = document.getElementById('system-selector-wrap');
+      const gradingSection = document.getElementById('grading-table-section');
+
       if (mode === 'gpa') {
         gpaPanel.hidden = false;
         cgpaPanel.hidden = true;
-      } else {
+        converterPanel.hidden = true;
+        if (systemSelector) systemSelector.style.display = 'flex';
+        if (gradingSection) gradingSection.style.display = 'block';
+      } else if (mode === 'cgpa') {
         gpaPanel.hidden = true;
         cgpaPanel.hidden = false;
+        converterPanel.hidden = true;
+        if (systemSelector) systemSelector.style.display = 'flex';
+        if (gradingSection) gradingSection.style.display = 'block';
+      } else if (mode === 'converter') {
+        gpaPanel.hidden = true;
+        cgpaPanel.hidden = true;
+        converterPanel.hidden = false;
+        if (systemSelector) systemSelector.style.display = 'none';
+        if (gradingSection) gradingSection.style.display = 'none';
+        updateUniversities();
       }
     });
   });
@@ -630,11 +1200,392 @@ const systemsJson = JSON.stringify(ALL_GRADING_SYSTEMS);
     updateGradingSystem(e.target.value);
   });
 
-  // ── Add Row Buttons ────────────────────────────────────────────────────────
-  document.getElementById('add-course-btn')?.addEventListener('click', addGpaRow);
-  document.getElementById('add-semester-btn')?.addEventListener('click', addCgpaRow);
+  // ── PDF Download Report ────────────────────────────────────────────────────
+  let jspdfLoaded = false;
+  async function loadJsPDF() {
+    if (window.jspdf) return;
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+      script.onload = () => {
+        jspdfLoaded = true;
+        resolve();
+      };
+      script.onerror = () => reject(new Error('Failed to load PDF library.'));
+      document.head.appendChild(script);
+    });
+  }
 
-  // ── Init with 3 GPA rows & 2 CGPA rows ────────────────────────────────────
-  addGpaRow(); addGpaRow(); addGpaRow();
-  addCgpaRow(); addCgpaRow();
+  async function downloadPDF(mode) {
+    const downloadBtn = document.getElementById(`download-${mode}-btn`);
+    if (!downloadBtn) return;
+    const originalText = downloadBtn.innerHTML;
+    try {
+      downloadBtn.innerHTML = `
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: spin 1s linear infinite; margin-right: 6px;">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" stroke-opacity="0.25"/>
+          <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        Generating...
+      `;
+      downloadBtn.disabled = true;
+
+      await loadJsPDF();
+      
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      const sys = getSystem();
+      const now = new Date();
+      const formattedDate = now.toLocaleDateString(undefined, { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+
+      // Colors
+      const primaryColor = [0, 112, 243]; // MyCGPA blue #0070f3
+      const darkColor = [23, 23, 23];    // Ink #171717
+      const grayColor = [136, 136, 136];  // Mute #888888
+      const lightBg = [250, 250, 250];    // Canvas soft #fafafa
+      const borderLine = [235, 235, 235];  // Hairline #ebebeb
+
+      // Draw Top Header Decorator
+      doc.setFillColor(...primaryColor);
+      doc.rect(0, 0, 210, 4, 'F');
+
+      // Branding Title
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(22);
+      doc.setTextColor(...darkColor);
+      doc.text('MyCGPA', 20, 22);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(22);
+      doc.setTextColor(...primaryColor);
+      doc.text('.com', 52, 22);
+
+      // Report Title
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(16);
+      doc.setTextColor(...darkColor);
+      doc.text('Academic Result Report', 20, 35);
+
+      // Metadata Info
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      doc.setTextColor(...grayColor);
+      doc.text(`Generated on: ${formattedDate}`, 20, 42);
+      doc.text(`Grading Scale: ${sys.name} (Max GPA: ${sys.maxGPA.toFixed(2)})`, 20, 47);
+
+      let y = 60;
+
+      if (mode === 'gpa') {
+        const rows = document.querySelectorAll('#gpa-rows tr');
+        const courses = [];
+        let totalPoints = 0, totalCredits = 0;
+        rows.forEach(row => {
+          const inputs = row.querySelectorAll('input');
+          const select = row.querySelector('select');
+          const courseName = inputs[0]?.value || 'Unnamed Course';
+          const credits = parseFloat(inputs[1]?.value) || 0;
+          const gradePoint = parseFloat(select?.value) || 0;
+          const gradeText = select?.options[select.selectedIndex]?.text || '';
+          const gradeName = gradeText.split(' ')[0] || '';
+          
+          if (credits > 0) {
+            courses.push({
+              name: courseName,
+              credits: credits,
+              grade: gradeName,
+              point: gradePoint
+            });
+            totalPoints += credits * gradePoint;
+            totalCredits += credits;
+          }
+        });
+        const gpa = totalCredits > 0 ? (totalPoints / totalCredits) : 0;
+
+        // Draw Summary Box
+        doc.setFillColor(...lightBg);
+        doc.rect(20, y, 170, 24, 'F');
+        doc.setDrawColor(...borderLine);
+        doc.rect(20, y, 170, 24, 'S');
+
+        // Total Credits Label
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
+        doc.setTextColor(...grayColor);
+        doc.text('TOTAL CREDIT HOURS', 30, y + 10);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(16);
+        doc.setTextColor(...darkColor);
+        doc.text(totalCredits.toFixed(1), 30, y + 18);
+
+        // GPA Label
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
+        doc.setTextColor(...grayColor);
+        doc.text('SEMESTER GPA', 110, y + 10);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(16);
+        doc.setTextColor(...primaryColor);
+        doc.text(`${gpa.toFixed(2)} / ${sys.maxGPA.toFixed(2)}`, 110, y + 18);
+
+        y += 40;
+
+        // Draw Course Table Header
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(11);
+        doc.setTextColor(...darkColor);
+        doc.text('Course Details', 20, y);
+        y += 6;
+
+        // Header Background
+        doc.setFillColor(...lightBg);
+        doc.rect(20, y, 170, 8, 'F');
+        doc.setDrawColor(...darkColor);
+        doc.line(20, y, 190, y);
+        doc.line(20, y + 8, 190, y + 8);
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(9);
+        doc.setTextColor(...darkColor);
+        doc.text('#', 23, y + 5.5);
+        doc.text('Course Name', 32, y + 5.5);
+        doc.text('Credits', 110, y + 5.5);
+        doc.text('Grade', 140, y + 5.5);
+        doc.text('Grade Point', 165, y + 5.5);
+
+        y += 8;
+
+        // Table Rows
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
+        courses.forEach((c, index) => {
+          if (index % 2 === 1) {
+            doc.setFillColor(253, 253, 253);
+            doc.rect(20, y, 170, 8, 'F');
+          }
+          doc.setDrawColor(...borderLine);
+          doc.line(20, y + 8, 190, y + 8);
+
+          doc.setTextColor(...darkColor);
+          doc.text(String(index + 1), 23, y + 5.5);
+          doc.text(c.name, 32, y + 5.5);
+          doc.text(c.credits.toFixed(1), 110, y + 5.5);
+          doc.text(c.grade, 140, y + 5.5);
+          doc.text(c.point.toFixed(2), 165, y + 5.5);
+
+          y += 8;
+        });
+
+      } else if (mode === 'cgpa') {
+        const rows = document.querySelectorAll('#cgpa-rows tr');
+        const semesters = [];
+        let totalPoints = 0, totalCredits = 0;
+        rows.forEach((row, i) => {
+          const inputs = row.querySelectorAll('input');
+          const semName = inputs[0]?.value || `Semester ${i + 1}`;
+          const gpa = parseFloat(inputs[1]?.value) || 0;
+          const credits = parseFloat(inputs[2]?.value) || 0;
+          
+          if (credits > 0 && gpa > 0) {
+            semesters.push({
+              name: semName,
+              gpa: gpa,
+              credits: credits
+            });
+            totalPoints += gpa * credits;
+            totalCredits += credits;
+          }
+        });
+        const cgpa = totalCredits > 0 ? (totalPoints / totalCredits) : 0;
+        
+        const extraInfoEl = document.getElementById('cgpa-extra-info');
+        const extraInfo = (extraInfoEl && extraInfoEl.style.display !== 'none') ? extraInfoEl.textContent : '';
+
+        // Draw Summary Box
+        doc.setFillColor(...lightBg);
+        doc.rect(20, y, 170, 24, 'F');
+        doc.setDrawColor(...borderLine);
+        doc.rect(20, y, 170, 24, 'S');
+
+        // Total Credits Label
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
+        doc.setTextColor(...grayColor);
+        doc.text(isBteb ? 'TOTAL WEIGHTAGE' : 'TOTAL CREDIT HOURS', 30, y + 10);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(16);
+        doc.setTextColor(...darkColor);
+        doc.text(totalCredits.toFixed(1) + (isBteb ? '%' : ''), 30, y + 18);
+
+        // CGPA Label
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
+        doc.setTextColor(...grayColor);
+        doc.text('CUMULATIVE CGPA', 110, y + 10);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(16);
+        doc.setTextColor(...primaryColor);
+        doc.text(`${cgpa.toFixed(2)} / ${sys.maxGPA.toFixed(2)}`, 110, y + 18);
+        
+        if (extraInfo) {
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(9);
+          doc.setTextColor(...darkColor);
+          doc.text(extraInfo, 110, y + 22);
+        }
+
+        y += 40;
+
+        // Draw Semester Table Header
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(11);
+        doc.setTextColor(...darkColor);
+        doc.text('Semester Details', 20, y);
+        y += 6;
+
+        // Header Background
+        doc.setFillColor(...lightBg);
+        doc.rect(20, y, 170, 8, 'F');
+        doc.setDrawColor(...darkColor);
+        doc.line(20, y, 190, y);
+        doc.line(20, y + 8, 190, y + 8);
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(9);
+        doc.setTextColor(...darkColor);
+        doc.text('#', 23, y + 5.5);
+        doc.text('Semester Name', 32, y + 5.5);
+        doc.text('GPA', 110, y + 5.5);
+        doc.text(isBteb ? 'Weightage (%)' : 'Credit Hours', 150, y + 5.5);
+
+        y += 8;
+
+        // Table Rows
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
+        semesters.forEach((s, index) => {
+          if (index % 2 === 1) {
+            doc.setFillColor(253, 253, 253);
+            doc.rect(20, y, 170, 8, 'F');
+          }
+          doc.setDrawColor(...borderLine);
+          doc.line(20, y + 8, 190, y + 8);
+
+          doc.setTextColor(...darkColor);
+          doc.text(String(index + 1), 23, y + 5.5);
+          doc.text(s.name, 32, y + 5.5);
+          doc.text(s.gpa.toFixed(2), 110, y + 5.5);
+          doc.text(s.credits.toFixed(1) + (isBteb ? '%' : ''), 150, y + 5.5);
+
+          y += 8;
+        });
+
+      } else if (mode === 'converter') {
+        const direction = directionSelect.value;
+        const country = countrySelect.options[countrySelect.selectedIndex]?.text || '';
+        const univ = getSelectedUniv();
+        const inputVal = parseFloat(valueInput.value) || 0;
+        const outputVal = resultVal.textContent || '—';
+        const formula = formulaText.textContent || '';
+        
+        const inputLabelText = direction === 'percentage-to-cgpa' ? 'PERCENTAGE (%)' : 'CGPA';
+        const outputLabelText = direction === 'percentage-to-cgpa' ? 'CONVERTED CGPA' : 'CONVERTED PERCENTAGE (%)';
+
+        // Draw Summary Box
+        doc.setFillColor(...lightBg);
+        doc.rect(20, y, 170, 24, 'F');
+        doc.setDrawColor(...borderLine);
+        doc.rect(20, y, 170, 24, 'S');
+
+        // Input Label
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
+        doc.setTextColor(...grayColor);
+        doc.text(inputLabelText + ' (INPUT)', 30, y + 10);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(16);
+        doc.setTextColor(...darkColor);
+        doc.text(inputVal.toFixed(2) + (direction === 'percentage-to-cgpa' ? '%' : ''), 30, y + 18);
+
+        // Result Label
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
+        doc.setTextColor(...grayColor);
+        doc.text(outputLabelText + ' (RESULT)', 110, y + 10);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(16);
+        doc.setTextColor(...primaryColor);
+        doc.text(outputVal + (direction === 'cgpa-to-percentage' ? '%' : ''), 110, y + 18);
+
+        y += 40;
+
+        // Details Card
+        doc.setFillColor(...lightBg);
+        doc.rect(20, y, 170, 36, 'F');
+        doc.setDrawColor(...borderLine);
+        doc.rect(20, y, 170, 36, 'S');
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(9);
+        doc.setTextColor(...darkColor);
+        doc.text('CALCULATION DETAILS', 26, y + 8);
+
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
+        doc.setTextColor(...grayColor);
+        doc.text(`Conversion Scale: ${univ?.name || 'Standard Scale'} (${country})`, 26, y + 16);
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(9);
+        doc.setTextColor(...darkColor);
+        doc.text('Formula Used:', 26, y + 24);
+        
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
+        doc.setTextColor(...primaryColor);
+        doc.text(formula.replace('\n', '  =>  '), 52, y + 24);
+      }
+
+      // Draw Footer Divider
+      doc.setDrawColor(...borderLine);
+      doc.line(20, 270, 190, 270);
+
+      // Footer Disclaimer
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(...grayColor);
+      doc.text('This is an unofficial academic calculation report generated online via MyCGPA.com.', 20, 276);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9);
+      doc.setTextColor(...primaryColor);
+      doc.text('mycgpa.com', 20, 282);
+
+      doc.save(`mycgpa-${mode}-report.pdf`);
+    } catch (err) {
+      console.error(err);
+      alert('An error occurred while generating the PDF. Please try again.');
+    } finally {
+      downloadBtn.innerHTML = originalText;
+      downloadBtn.disabled = false;
+    }
+  }
+
+  // ── Add Row Buttons & Download Report ──────────────────────────────────────
+  document.getElementById('add-course-btn')?.addEventListener('click', () => addGpaRow());
+  document.getElementById('add-semester-btn')?.addEventListener('click', () => addCgpaRow());
+  document.getElementById('download-gpa-btn')?.addEventListener('click', () => downloadPDF('gpa'));
+  document.getElementById('download-cgpa-btn')?.addEventListener('click', () => downloadPDF('cgpa'));
+  document.getElementById('download-converter-btn')?.addEventListener('click', () => downloadPDF('converter'));
+
+  // ── Initialize State ──────────────────────────────────────────────────────
+  updateGradingSystem(currentSystemId);
 </script>

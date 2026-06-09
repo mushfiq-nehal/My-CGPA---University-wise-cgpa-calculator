@@ -3,6 +3,60 @@
 
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+.dark {
+  --color-ink: #f3f4f6;
+  --color-canvas: #0a0a0c;
+  --color-canvas-soft: #121214;
+  --color-canvas-soft-2: #1c1c1f;
+  --color-body: #9ca3af;
+  --color-mute: #6b7280;
+  --color-hairline: #1f1f23;
+  --color-hairline-strong: #374151;
+  --color-on-primary: #000000;
+  --color-link: #3b82f6;
+  --color-link-deep: #2563eb;
+  --color-link-bg-soft: #0f172a;
+  --color-navbar-bg: rgba(10, 10, 12, 0.85);
+}
+
+/* Custom shadows for dark mode */
+.dark .card-level-1,
+.dark [class*="card-level-1"] {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+.dark .card-level-2,
+.dark [class*="card-level-2"] {
+  box-shadow:
+    0px 1px 1px rgba(0, 0, 0, 0.2),
+    0px 2px 2px rgba(0, 0, 0, 0.4),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+.dark .card-level-3,
+.dark [class*="card-level-3"] {
+  box-shadow:
+    0px 2px 2px rgba(0, 0, 0, 0.4),
+    0px 8px 8px -8px rgba(0, 0, 0, 0.4),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+.dark .card-level-4,
+.dark [class*="card-level-4"] {
+  box-shadow:
+    0px 2px 2px rgba(0, 0, 0, 0.4),
+    0px 8px 16px -4px rgba(0, 0, 0, 0.4),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+/* Softer gradients in dark mode */
+.dark .mesh-gradient {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59, 130, 246, 0.15) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 80% 20%, rgba(121, 40, 202, 0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 20% 30%, rgba(0, 223, 216, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 70% 60%, rgba(255, 0, 128, 0.06) 0%, transparent 50%);
+}
+
 /* ─── Design System Tokens (DESIGN.md) ────────────────────────────────────── */
 @theme {
   /* Colors */
@@ -26,6 +80,7 @@
   --color-cyan: #50e3c2;
   --color-violet: #7928ca;
   --color-highlight-pink: #ff0080;
+  --color-navbar-bg: rgba(250, 250, 250, 0.85);
 
   /* Typography */
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
