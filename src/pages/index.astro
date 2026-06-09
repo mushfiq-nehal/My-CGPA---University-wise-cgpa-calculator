@@ -38,4 +38,13 @@ const schema = {
   <Calculator />
   <FormulaSection />
   <UniversitiesPreview />
+  <script>
+    // Scroll to the calculator section by default when no specific hash is set
+    if (!window.location.hash) {
+      const calculator = document.getElementById('calculator');
+      if (calculator) {
+        calculator.scrollIntoView({ behavior: 'instant' });
+      }
+    }
+  </script>
 </Layout>
