@@ -1,0 +1,170 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="404 — Page Not Found | MyCGPA"
+  description="The page you are looking for does not exist on MyCGPA. Search for grading systems or calculate your CGPA instantly."
+>
+  <div class="error-container">
+    <div class="mesh-gradient" aria-hidden="true"></div>
+    <div class="error-content container-page">
+      <div class="error-illustration card-level-2" aria-hidden="true">
+        <svg class="error-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <!-- Compass icon styling -->
+          <circle cx="12" cy="12" r="10" stroke-dasharray="4 2"></circle>
+          <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+          <circle cx="12" cy="12" r="1"></circle>
+        </svg>
+      </div>
+      <span class="caption-mono error-badge-text">Error Code: 404</span>
+      <h1 class="display-xl error-title">Page Not Found</h1>
+      <p class="body-lg error-description">
+        We searched everywhere, but this page seems to have drifted off the map. Let's get you back on track.
+      </p>
+      <div class="error-actions">
+        <a href="/" class="btn-primary-custom">
+          Back to Home
+        </a>
+        <a href="/universities" class="btn-secondary-custom">
+          Explore Universities
+        </a>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .error-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 240px);
+    padding-top: var(--spacing-5xl);
+    padding-bottom: var(--spacing-5xl);
+    text-align: center;
+    overflow: hidden;
+    background-color: var(--color-canvas);
+  }
+
+  .error-content {
+    position: relative;
+    z-index: 1;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  .error-illustration {
+    color: var(--color-ink);
+    margin-bottom: var(--spacing-xs);
+    animation: float 6s ease-in-out infinite;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 120px;
+    height: 120px;
+    background-color: var(--color-canvas-soft);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-xl);
+  }
+  
+  .error-illustration svg {
+    width: 60px;
+    height: 60px;
+    stroke: var(--color-link);
+    opacity: 0.85;
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+
+  .error-badge-text {
+    color: var(--color-mute);
+    background-color: var(--color-canvas-soft-2);
+    padding: var(--spacing-xxs) var(--spacing-md);
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--color-hairline);
+    font-size: 11px;
+  }
+
+  .error-title {
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .error-description {
+    color: var(--color-body);
+    margin: 0;
+    line-height: 1.6;
+    max-width: 480px;
+  }
+
+  .error-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-md);
+  }
+
+  .btn-primary-custom {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    padding: 0 var(--spacing-lg);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--color-on-primary);
+    background-color: var(--color-ink);
+    border-radius: var(--radius-pill);
+    text-decoration: none;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+  }
+
+  .btn-primary-custom:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary-custom {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    padding: 0 var(--spacing-lg);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--color-ink);
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-hairline-strong);
+    border-radius: var(--radius-pill);
+    text-decoration: none;
+    transition: background-color 0.15s ease, transform 0.15s ease;
+  }
+
+  .btn-secondary-custom:hover {
+    background-color: var(--color-canvas-soft-2);
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 479px) {
+    .error-actions {
+      flex-direction: column;
+      width: 100%;
+      gap: var(--spacing-sm);
+      padding-inline: var(--spacing-md);
+    }
+    .btn-primary-custom, .btn-secondary-custom {
+      width: 100%;
+    }
+  }
+</style>

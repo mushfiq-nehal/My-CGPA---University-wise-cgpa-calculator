@@ -43,6 +43,17 @@ const trustIndicators = [
       </a>
     </div>
 
+    <!-- Quick Links for Legal & Info -->
+    <div class="hero-quick-links">
+      <a href="/about" class="quick-link">About Us</a>
+      <span class="quick-link-dot" aria-hidden="true">•</span>
+      <a href="/contact" class="quick-link">Contact Us</a>
+      <span class="quick-link-dot" aria-hidden="true">•</span>
+      <a href="/privacy" class="quick-link">Privacy Policy</a>
+      <span class="quick-link-dot" aria-hidden="true">•</span>
+      <a href="/terms" class="quick-link">Terms &amp; Conditions</a>
+    </div>
+
     <!-- Trust indicators -->
     <div class="trust-strip" role="list" aria-label="Platform features">
       {trustIndicators.map((item) => (
@@ -173,6 +184,34 @@ const trustIndicators = [
   .btn-hero-secondary:hover {
     border-color: var(--color-hairline-strong);
     transform: translateY(-1px);
+  }
+
+  /* Quick Links */
+  .hero-quick-links {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: calc(-1 * var(--spacing-xs));
+  }
+
+  .quick-link {
+    font-size: 13px;
+    color: var(--color-mute);
+    text-decoration: none;
+    transition: color 0.15s ease;
+    letter-spacing: -0.28px;
+  }
+
+  .quick-link:hover {
+    color: var(--color-ink);
+  }
+
+  .quick-link-dot {
+    color: var(--color-hairline-strong);
+    font-size: 8px;
+    user-select: none;
   }
 
   /* Trust strip */

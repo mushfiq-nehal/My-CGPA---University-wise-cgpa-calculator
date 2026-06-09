@@ -1,0 +1,220 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+interface Props {
+  error: unknown;
+}
+
+const { error } = Astro.props;
+const isDev = import.meta.env.DEV;
+---
+
+<Layout
+  title="500 — Server Error | MyCGPA"
+  description="An internal server error occurred on MyCGPA. Our team has been notified and we are working to resolve it."
+>
+  <div class="error-container">
+    <div class="mesh-gradient" aria-hidden="true"></div>
+    <div class="error-content container-page">
+      <div class="error-illustration card-level-2" aria-hidden="true">
+        <svg class="error-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <!-- Server icon with a caution sign -->
+          <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+          <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+          <line x1="6" y1="6" x2="6.01" y2="6"></line>
+          <line x1="6" y1="18" x2="6.01" y2="18"></line>
+          <path d="M17 6h1"></path>
+          <path d="M17 18h1"></path>
+          <path d="M12 10v4" stroke="var(--color-error)" stroke-width="2"></path>
+        </svg>
+      </div>
+      <span class="caption-mono error-badge-text">Error Code: 500</span>
+      <h1 class="display-xl error-title">System Error</h1>
+      <p class="body-lg error-description">
+        Something unexpected went wrong on our servers. We're looking into this right now. Please try again shortly.
+      </p>
+
+      {isDev && error && (
+        <div class="dev-error-info card-level-1">
+          <p class="caption-mono dev-header">Developer Error Details (Visible in Dev Only)</p>
+          <pre class="dev-pre">{error instanceof Error ? error.stack || error.message : String(error)}</pre>
+        </div>
+      )}
+
+      <div class="error-actions">
+        <a href="/" class="btn-primary-custom">
+          Back to Home
+        </a>
+        <a href="/contact" class="btn-secondary-custom">
+          Contact Support
+        </a>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .error-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 240px);
+    padding-top: var(--spacing-5xl);
+    padding-bottom: var(--spacing-5xl);
+    text-align: center;
+    overflow: hidden;
+    background-color: var(--color-canvas);
+  }
+
+  .error-content {
+    position: relative;
+    z-index: 1;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  .error-illustration {
+    color: var(--color-ink);
+    margin-bottom: var(--spacing-xs);
+    animation: pulse 4s ease-in-out infinite;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 120px;
+    height: 120px;
+    background-color: var(--color-canvas-soft);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-xl);
+  }
+  
+  .error-illustration svg {
+    width: 60px;
+    height: 60px;
+    stroke: var(--color-mute);
+    opacity: 0.85;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.03);
+      opacity: 0.95;
+    }
+  }
+
+  .error-badge-text {
+    color: var(--color-mute);
+    background-color: var(--color-canvas-soft-2);
+    padding: var(--spacing-xxs) var(--spacing-md);
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--color-hairline);
+    font-size: 11px;
+  }
+
+  .error-title {
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .error-description {
+    color: var(--color-body);
+    margin: 0;
+    line-height: 1.6;
+    max-width: 480px;
+  }
+
+  .dev-error-info {
+    width: 100%;
+    margin-top: var(--spacing-md);
+    background-color: var(--color-canvas-soft-2);
+    border: 1px dashed var(--color-error);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    text-align: left;
+  }
+
+  .dev-header {
+    color: var(--color-error);
+    margin-top: 0;
+    margin-bottom: var(--spacing-xs);
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .dev-pre {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--color-ink);
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 180px;
+    overflow-y: auto;
+  }
+
+  .error-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-md);
+  }
+
+  .btn-primary-custom {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    padding: 0 var(--spacing-lg);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--color-on-primary);
+    background-color: var(--color-ink);
+    border-radius: var(--radius-pill);
+    text-decoration: none;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+  }
+
+  .btn-primary-custom:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary-custom {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    padding: 0 var(--spacing-lg);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--color-ink);
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-hairline-strong);
+    border-radius: var(--radius-pill);
+    text-decoration: none;
+    transition: background-color 0.15s ease, transform 0.15s ease;
+  }
+
+  .btn-secondary-custom:hover {
+    background-color: var(--color-canvas-soft-2);
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 479px) {
+    .error-actions {
+      flex-direction: column;
+      width: 100%;
+      gap: var(--spacing-sm);
+      padding-inline: var(--spacing-md);
+    }
+    .btn-primary-custom, .btn-secondary-custom {
+      width: 100%;
+    }
+  }
+</style>
