@@ -1,0 +1,592 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="Contact Us — Support & Feedback | MyCGPA"
+  description="Have questions, feedback, or need to request a new university calculator? Contact the MyCGPA team at support@mycgpa.com or send a message."
+>
+  <div class="contact-page">
+    <div class="mesh-gradient" aria-hidden="true"></div>
+
+    <!-- Hero Section -->
+    <section class="contact-hero container-page">
+      <div class="hero-content">
+        <h1 class="display-xl page-title">Contact Us</h1>
+        <p class="body-lg subtitle">
+          Have a question, feedback, or want to request a university grading template? We'd love to hear from you.
+        </p>
+      </div>
+    </section>
+
+    <!-- Main Section -->
+    <section class="contact-content container-page">
+      <div class="grid-layout">
+        <!-- Left Column: Contact info & support details -->
+        <div class="info-sidebar">
+          <div class="info-card card-level-2">
+            <h2 class="display-md sidebar-title">Get in Touch</h2>
+            <p class="body-md intro-text">
+              Our team works hard to keep university templates updated and calculations 100% accurate. Here's how you can reach us.
+            </p>
+
+            <div class="contact-methods">
+              <div class="method-item">
+                <div class="method-icon" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                  </svg>
+                </div>
+                <div class="method-details">
+                  <h3 class="caption-mono">Support Email</h3>
+                  <a href="mailto:support@mycgpa.com" class="method-link font-medium">support@mycgpa.com</a>
+                  <p class="body-sm text-mute">We respond within 24-48 business hours.</p>
+                </div>
+              </div>
+
+              <div class="method-item">
+                <div class="method-icon" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8"></path>
+                    <path d="M12 18h.01"></path>
+                  </svg>
+                </div>
+                <div class="method-details">
+                  <h3 class="caption-mono">Request a University</h3>
+                  <p class="body-sm text-body">
+                    If your university is missing, send us the official grading policy document or link, and we'll build a custom calculator for it.
+                  </p>
+                </div>
+              </div>
+
+              <div class="method-item">
+                <div class="method-icon" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  </svg>
+                </div>
+                <div class="method-details">
+                  <h3 class="caption-mono">Privacy Safeguard</h3>
+                  <p class="body-sm text-body">
+                    Your calculations are fully client-side and private. Submitting this form does not share your calculator data.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Interactive Form -->
+        <div class="form-container">
+          <div class="form-card card-level-2" id="form-card">
+            <h2 class="display-md form-title">Send a Message</h2>
+            <form id="contact-form" class="contact-form" novalidate>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="name" class="form-label">Name</label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    class="form-input"
+                    placeholder="John Doe"
+                    required
+                  />
+                  <span class="error-msg" id="name-error">Please enter your name</span>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="email" class="form-label">Email Address</label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    class="form-input"
+                    placeholder="john@example.com"
+                    required
+                  />
+                  <span class="error-msg" id="email-error">Please enter a valid email address</span>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="subject" class="form-label">Subject</label>
+                  <select id="subject" name="subject" class="form-select">
+                    <option value="general">General Inquiry</option>
+                    <option value="request">Request University Template</option>
+                    <option value="bug">Report a Calculation Error</option>
+                    <option value="other">Other Feedback</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="message" class="form-label">Message</label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    rows="5"
+                    class="form-input form-textarea"
+                    placeholder="How can we help you?"
+                    required
+                  ></textarea>
+                  <span class="error-msg" id="message-error">Please write a message</span>
+                </div>
+              </div>
+
+              <button type="submit" class="btn-submit" id="submit-btn">
+                <span>Send Message</span>
+                <svg class="spinner" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="display: none;">
+                  <circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle>
+                  <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"></path>
+                </svg>
+              </button>
+            </form>
+          </div>
+
+          <!-- Success Card (hidden by default) -->
+          <div class="success-card card-level-2" id="success-card" hidden>
+            <div class="success-icon" aria-hidden="true">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+            </div>
+            <h2 class="display-md success-title">Message Sent!</h2>
+            <p class="body-md success-desc">
+              Thank you for reaching out. We have received your message and will review it shortly. A confirmation will be sent to your email.
+            </p>
+            <button class="btn-primary reset-btn" id="reset-btn">Send Another Message</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<style>
+  .contact-page {
+    position: relative;
+    padding-bottom: var(--spacing-5xl);
+  }
+
+  .contact-hero {
+    position: relative;
+    z-index: 1;
+    padding-top: var(--spacing-4xl);
+    padding-bottom: var(--spacing-2xl);
+    text-align: center;
+  }
+
+  .hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .page-title {
+    color: var(--color-ink);
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .subtitle {
+    color: var(--color-body);
+    margin: 0;
+  }
+
+  /* Grid Layout */
+  .contact-content {
+    margin-top: var(--spacing-xl);
+  }
+
+  .grid-layout {
+    display: grid;
+    grid-template-columns: 4fr 5fr;
+    gap: var(--spacing-2xl);
+    align-items: start;
+  }
+
+  /* Info Sidebar */
+  .info-card {
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    border: 1px solid var(--color-hairline);
+  }
+
+  .sidebar-title {
+    color: var(--color-ink);
+    margin-top: 0;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .intro-text {
+    color: var(--color-body);
+    margin-bottom: var(--spacing-xl);
+    line-height: 1.6;
+  }
+
+  .contact-methods {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+  }
+
+  .method-item {
+    display: flex;
+    gap: var(--spacing-md);
+  }
+
+  .method-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background-color: var(--color-link-bg-soft);
+    color: var(--color-link);
+    border-radius: var(--radius-md);
+    flex-shrink: 0;
+  }
+
+  .method-details h3 {
+    margin: 0 0 var(--spacing-xxs) 0;
+    color: var(--color-mute);
+    font-size: 11px;
+    font-family: var(--font-mono);
+  }
+
+  .method-details p {
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .method-link {
+    display: inline-block;
+    color: var(--color-ink);
+    font-size: 18px;
+    text-decoration: none;
+    margin-bottom: var(--spacing-xxs);
+    transition: color 0.15s ease;
+  }
+
+  .method-link:hover {
+    color: var(--color-link);
+  }
+
+  .font-medium {
+    font-weight: 500;
+  }
+
+  .text-mute {
+    color: var(--color-mute);
+  }
+
+  .text-body {
+    color: var(--color-body);
+  }
+
+  /* Form Section */
+  .form-card, .success-card {
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    border: 1px solid var(--color-hairline);
+  }
+
+  .form-title {
+    color: var(--color-ink);
+    margin-top: 0;
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .form-row {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xxs);
+  }
+
+  .form-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-ink);
+  }
+
+  .form-input, .form-select {
+    width: 100%;
+    height: 44px;
+    padding: 0 var(--spacing-md);
+    background-color: var(--color-canvas-soft);
+    border: 1px solid var(--color-hairline-strong);
+    border-radius: var(--radius-sm);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    transition: border-color 0.15s ease, outline 0.15s ease;
+  }
+
+  .form-textarea {
+    height: auto;
+    padding: var(--spacing-sm) var(--spacing-md);
+    resize: vertical;
+  }
+
+  .form-input::placeholder {
+    color: var(--color-mute);
+  }
+
+  .form-input:focus, .form-select:focus {
+    outline: none;
+    border-color: var(--color-link);
+    box-shadow: 0 0 0 3px var(--color-link-bg-soft);
+  }
+
+  .form-input.is-invalid {
+    border-color: var(--color-error);
+  }
+
+  .form-input.is-invalid:focus {
+    box-shadow: 0 0 0 3px var(--color-error-soft);
+  }
+
+  .error-msg {
+    font-size: 12px;
+    color: var(--color-error);
+    display: none;
+    margin-top: 2px;
+  }
+
+  .error-msg.visible {
+    display: block;
+  }
+
+  .btn-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    height: 48px;
+    background-color: var(--color-ink);
+    color: var(--color-on-primary);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+    margin-top: var(--spacing-sm);
+  }
+
+  .btn-submit:hover {
+    opacity: 0.9;
+  }
+
+  .btn-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  /* Spinner */
+  .spinner {
+    animation: rotate 1s linear infinite;
+  }
+
+  @keyframes rotate {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Success Card Style */
+  .success-card {
+    text-align: center;
+    padding: var(--spacing-3xl) var(--spacing-2xl);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  .success-icon {
+    width: 64px;
+    height: 64px;
+    background-color: var(--color-link-bg-soft);
+    color: var(--color-link);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .success-title {
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .success-desc {
+    color: var(--color-body);
+    margin: 0 max-width: 480px;
+    line-height: 1.6;
+  }
+
+  .reset-btn {
+    margin-top: var(--spacing-sm);
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    padding: 0 var(--spacing-lg);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--color-on-primary);
+    background-color: var(--color-ink);
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+  }
+
+  .btn-primary:hover {
+    opacity: 0.9;
+  }
+
+  /* Responsive styling */
+  @media (max-width: 991px) {
+    .grid-layout {
+      grid-template-columns: 1fr;
+      gap: var(--spacing-xl);
+    }
+  }
+
+  @media (max-width: 767px) {
+    .contact-hero {
+      padding-top: var(--spacing-2xl);
+    }
+
+    .info-card, .form-card, .success-card {
+      padding: var(--spacing-lg);
+    }
+  }
+</style>
+
+<script>
+  // Simple Form Validation & Interactive mockup flow
+  const form = document.getElementById('contact-form') as HTMLFormElement | null;
+  const formCard = document.getElementById('form-card');
+  const successCard = document.getElementById('success-card');
+  const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement | null;
+  const spinner = submitBtn?.querySelector('.spinner') as HTMLElement | null;
+  const resetBtn = document.getElementById('reset-btn');
+
+  // Input elements
+  const nameInput = document.getElementById('name') as HTMLInputElement | null;
+  const emailInput = document.getElementById('email') as HTMLInputElement | null;
+  const messageInput = document.getElementById('message') as HTMLTextAreaElement | null;
+
+  // Error spans
+  const nameError = document.getElementById('name-error');
+  const emailError = document.getElementById('email-error');
+  const messageError = document.getElementById('message-error');
+
+  const validateEmail = (email: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!form || !submitBtn || !spinner) return;
+
+    let isValid = true;
+
+    // Validate Name
+    if (!nameInput?.value.trim()) {
+      nameInput?.classList.add('is-invalid');
+      nameError?.classList.add('visible');
+      isValid = false;
+    } else {
+      nameInput.classList.remove('is-invalid');
+      nameError?.classList.remove('visible');
+    }
+
+    // Validate Email
+    if (!emailInput?.value.trim() || !validateEmail(emailInput.value)) {
+      emailInput?.classList.add('is-invalid');
+      emailError?.classList.add('visible');
+      isValid = false;
+    } else {
+      emailInput.classList.remove('is-invalid');
+      emailError?.classList.remove('visible');
+    }
+
+    // Validate Message
+    if (!messageInput?.value.trim()) {
+      messageInput?.classList.add('is-invalid');
+      messageError?.classList.add('visible');
+      isValid = false;
+    } else {
+      messageInput.classList.remove('is-invalid');
+      messageError?.classList.remove('visible');
+    }
+
+    if (!isValid) return;
+
+    // Simulate sending progress
+    submitBtn.disabled = true;
+    const btnText = submitBtn.querySelector('span');
+    if (btnText) btnText.textContent = 'Sending...';
+    spinner.style.display = 'inline-block';
+
+    setTimeout(() => {
+      // Show success
+      if (formCard) formCard.style.display = 'none';
+      if (successCard) successCard.hidden = false;
+
+      // Reset button state
+      submitBtn.disabled = false;
+      if (btnText) btnText.textContent = 'Send Message';
+      spinner.style.display = 'none';
+      form.reset();
+    }, 1200);
+  });
+
+  // Listeners to remove invalid states on input
+  nameInput?.addEventListener('input', () => {
+    nameInput.classList.remove('is-invalid');
+    nameError?.classList.remove('visible');
+  });
+
+  emailInput?.addEventListener('input', () => {
+    emailInput.classList.remove('is-invalid');
+    emailError?.classList.remove('visible');
+  });
+
+  messageInput?.addEventListener('input', () => {
+    messageInput.classList.remove('is-invalid');
+    messageError?.classList.remove('visible');
+  });
+
+  // Reset/Send Another Message Flow
+  resetBtn?.addEventListener('click', () => {
+    if (successCard) successCard.hidden = true;
+    if (formCard) formCard.style.display = 'block';
+  });
+</script>

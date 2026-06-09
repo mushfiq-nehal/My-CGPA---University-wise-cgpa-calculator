@@ -35,6 +35,15 @@ const footerColumns = [
       { href: '/#faq', label: 'FAQ' },
     ],
   },
+  {
+    label: 'Company',
+    links: [
+      { href: '/about', label: 'About Us' },
+      { href: '/contact', label: 'Contact Us' },
+      { href: '/privacy', label: 'Privacy Policy' },
+      { href: '/terms', label: 'Terms & Conditions' },
+    ],
+  },
 ];
 ---
 
@@ -133,7 +142,7 @@ const footerColumns = [
 
   .footer-columns {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: var(--spacing-xl);
   }
 
