@@ -1,11 +1,41 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import Calculator from '../components/Calculator.astro';
+import FormulaSection from '../components/FormulaSection.astro';
+import UniversitiesPreview from '../components/UniversitiesPreview.astro';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is CGPA?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'CGPA (Cumulative Grade Point Average) is the weighted average of all semester GPAs, calculated using the formula: CGPA = Σ(Credit Hours × Grade Point) ÷ Σ(Credit Hours).',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How do I calculate CGPA?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'To calculate CGPA: 1) For each course, multiply credit hours by grade point. 2) Sum all these products. 3) Divide by total credit hours. Use our free calculator above for instant results.',
+      },
+    },
+  ],
+};
 ---
 
-<Layout>
-	<Welcome />
+<Layout
+  title="CGPA Calculator — Free GPA & CGPA Calculator | MyCGPA"
+  description="Free CGPA and GPA calculator for Bangladesh, India, and Pakistan universities. Supports UGC Bangladesh, IIT, HEC Pakistan grading systems. Calculate your CGPA instantly — no signup required."
+  schema={schema}
+>
+  <Hero />
+  <Calculator />
+  <FormulaSection />
+  <UniversitiesPreview />
 </Layout>

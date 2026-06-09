@@ -1,0 +1,446 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Calculator from '../../components/Calculator.astro';
+import UniversityCard from '../../components/UniversityCard.astro';
+import { UNIVERSITIES, getUniversityBySlug, COUNTRY_NAMES } from '../../data/universities';
+import { getGradingSystemById } from '../../data/gradingSystems';
+
+export function getStaticPaths() {
+  return UNIVERSITIES.map((u) => ({ params: { slug: u.slug }, props: { university: u } }));
+}
+
+const { university: u } = Astro.props;
+const gradingSystem = getGradingSystemById(u.gradingSystemId);
+const relatedUnis = (u.relatedSlugs ?? [])
+  .map(s => UNIVERSITIES.find(x => x.slug === s))
+  .filter(Boolean);
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: u.faq.map(f => ({
+    '@type': 'Question',
+    name: f.question,
+    acceptedAnswer: { '@type': 'Answer', text: f.answer },
+  })),
+};
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://mycgpa.com' },
+    { '@type': 'ListItem', position: 2, name: 'Universities', item: 'https://mycgpa.com/universities' },
+    { '@type': 'ListItem', position: 3, name: `${u.shortName} CGPA Calculator`, item: `https://mycgpa.com/universities/${u.slug}` },
+  ],
+};
+---
+
+<Layout
+  title={`${u.name} CGPA Calculator — ${u.shortName} GPA | MyCGPA`}
+  description={`Free CGPA calculator for ${u.name} (${u.shortName}). Uses the official ${gradingSystem?.shortName ?? 'university'} grading system. Instantly calculate your ${u.shortName} CGPA online.`}
+  canonical={`/universities/${u.slug}`}
+  schema={[faqSchema, breadcrumbSchema]}
+>
+  <!-- Breadcrumbs -->
+  <nav class="breadcrumbs container-page" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="/">Home</a></li>
+      <li aria-hidden="true">›</li>
+      <li><a href="/universities">Universities</a></li>
+      <li aria-hidden="true">›</li>
+      <li aria-current="page">{u.shortName} CGPA Calculator</li>
+    </ol>
+  </nav>
+
+  <!-- University Hero -->
+  <div class="uni-hero">
+    <div class="container-page uni-hero-inner">
+      <div class="uni-hero-meta">
+        <span class="uni-country-badge">{COUNTRY_NAMES[u.country]}</span>
+        {u.established && <span class="uni-est-badge caption-mono">Est. {u.established}</span>}
+      </div>
+      <h1 class="display-xl uni-title">{u.name} CGPA Calculator.</h1>
+      <p class="body-lg uni-desc">{u.description}</p>
+      <div class="uni-stats">
+        {u.totalStudents && (
+          <div class="uni-stat">
+            <span class="uni-stat-value">{u.totalStudents}</span>
+            <span class="uni-stat-label caption-mono">Students</span>
+          </div>
+        )}
+        {gradingSystem && (
+          <div class="uni-stat">
+            <span class="uni-stat-value">{gradingSystem.maxGPA.toFixed(1)}</span>
+            <span class="uni-stat-label caption-mono">Max GPA</span>
+          </div>
+        )}
+        <div class="uni-stat">
+          <span class="uni-stat-value">{u.city}</span>
+          <span class="uni-stat-label caption-mono">Location</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Calculator -->
+  <Calculator defaultSystemId={u.gradingSystemId} />
+
+  <!-- Grading System Section -->
+  {gradingSystem && (
+    <section class="grading-section" aria-labelledby="grading-heading">
+      <div class="container-page">
+        <span class="caption-mono section-eyebrow">Grading System</span>
+        <h2 class="display-md" id="grading-heading">{gradingSystem.name}</h2>
+        <p class="body-md grading-desc">{gradingSystem.description}</p>
+        <div class="table-wrap">
+          <table class="grading-table" aria-label={`${u.shortName} grading scale`}>
+            <thead>
+              <tr>
+                <th scope="col">Marks Range</th>
+                <th scope="col">Letter Grade</th>
+                <th scope="col">Grade Point</th>
+              </tr>
+            </thead>
+            <tbody>
+              {gradingSystem.entries.map(e => (
+                <tr>
+                  <td>{e.minMark === 0 ? `Below ${e.maxMark + 1}` : `${e.minMark} – ${e.maxMark}`}</td>
+                  <td><strong class="grade-label">{e.grade}</strong></td>
+                  <td>{e.point.toFixed(2)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Academic Standing -->
+  <section class="standing-section" aria-labelledby="standing-heading">
+    <div class="container-page">
+      <span class="caption-mono section-eyebrow">Academic Standing</span>
+      <h2 class="display-md" id="standing-heading">What your CGPA means at {u.shortName}.</h2>
+      <div class="standing-grid">
+        {u.academicStanding.map(s => (
+          <div class="standing-card">
+            <div class="standing-range">
+              <span class="standing-min">{s.minCGPA.toFixed(2)}</span>
+              <span class="standing-sep">–</span>
+              <span class="standing-max">{s.maxCGPA.toFixed(2)}</span>
+            </div>
+            <h3 class="standing-label">{s.label}</h3>
+            <p class="standing-desc">{s.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="uni-faq-section" aria-labelledby="uni-faq-heading">
+    <div class="container-page">
+      <span class="caption-mono section-eyebrow">FAQ</span>
+      <h2 class="display-md" id="uni-faq-heading">Common questions about {u.shortName} grading.</h2>
+      <div class="faq-list">
+        {u.faq.map((f, i) => (
+          <details class="faq-item" id={`uni-faq-${i}`}>
+            <summary class="faq-question">
+              <span>{f.question}</span>
+              <svg class="faq-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </summary>
+            <p class="faq-answer">{f.answer}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Universities -->
+  {relatedUnis.length > 0 && (
+    <section class="related-section" aria-labelledby="related-heading">
+      <div class="container-page">
+        <h2 class="display-md" id="related-heading">Related university calculators.</h2>
+        <div class="related-grid">
+          {relatedUnis.map(r => r && <UniversityCard university={r} />)}
+        </div>
+      </div>
+    </section>
+  )}
+</Layout>
+
+<style>
+  .breadcrumbs {
+    padding-block: var(--spacing-md);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .breadcrumbs ol {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 13px;
+    color: var(--color-mute);
+  }
+
+  .breadcrumbs a {
+    color: var(--color-body);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .breadcrumbs a:hover { color: var(--color-ink); }
+
+  .breadcrumbs [aria-current="page"] { color: var(--color-ink); font-weight: 500; }
+
+  /* Hero */
+  .uni-hero {
+    background: var(--color-canvas);
+    border-bottom: 1px solid var(--color-hairline);
+    padding-block: var(--spacing-4xl);
+  }
+
+  .uni-hero-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+  }
+
+  .uni-hero-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+  }
+
+  .uni-country-badge {
+    font-size: 12px;
+    color: var(--color-body);
+    background: var(--color-canvas-soft);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-full);
+    padding: 2px var(--spacing-xs);
+  }
+
+  .uni-est-badge { color: var(--color-mute); }
+
+  .uni-title { margin: 0; color: var(--color-ink); }
+
+  .uni-desc { margin: 0; color: var(--color-body); max-width: 640px; }
+
+  .uni-stats {
+    display: flex;
+    gap: var(--spacing-xl);
+    flex-wrap: wrap;
+  }
+
+  .uni-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .uni-stat-value {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--color-ink);
+    letter-spacing: -0.6px;
+  }
+
+  .uni-stat-label { color: var(--color-mute); }
+
+  /* Grading Table */
+  .grading-section {
+    padding-block: var(--spacing-4xl);
+    background: var(--color-canvas-soft);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .grading-section .container-page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .section-eyebrow { color: var(--color-mute); }
+
+  .grading-section h2 { margin: 0; color: var(--color-ink); }
+
+  .grading-desc { margin: 0; color: var(--color-body); max-width: 560px; }
+
+  .table-wrap { overflow-x: auto; }
+
+  .grading-table {
+    width: 100%;
+    max-width: 480px;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  .grading-table th {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-mute);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    text-align: left;
+    border-bottom: 1px solid var(--color-hairline);
+    background: var(--color-canvas);
+    white-space: nowrap;
+  }
+
+  .grading-table td {
+    padding: var(--spacing-sm);
+    border-bottom: 1px solid var(--color-hairline);
+    color: var(--color-body);
+  }
+
+  .grading-table tbody tr:last-child td { border-bottom: none; }
+
+  .grade-label {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--color-ink);
+  }
+
+  /* Academic Standing */
+  .standing-section {
+    padding-block: var(--spacing-4xl);
+    background: var(--color-canvas);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .standing-section .container-page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+  }
+
+  .standing-section h2 { margin: 0; color: var(--color-ink); }
+
+  .standing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+  }
+
+  .standing-card {
+    background: var(--color-canvas-soft);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+
+  .standing-range {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--color-mute);
+  }
+
+  .standing-label {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-ink);
+    letter-spacing: -0.5px;
+  }
+
+  .standing-desc {
+    margin: 0;
+    font-size: 13px;
+    color: var(--color-body);
+  }
+
+  /* FAQ */
+  .uni-faq-section {
+    padding-block: var(--spacing-4xl);
+    background: var(--color-canvas-soft);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .uni-faq-section .container-page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+  }
+
+  .uni-faq-section h2 { margin: 0; color: var(--color-ink); }
+
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  .faq-item { border-bottom: 1px solid var(--color-hairline); }
+
+  .faq-question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg) 0;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--color-ink);
+    cursor: pointer;
+    list-style: none;
+    letter-spacing: -0.4px;
+  }
+
+  .faq-question::-webkit-details-marker { display: none; }
+
+  .faq-arrow { flex-shrink: 0; transition: transform 0.2s; }
+
+  details[open] .faq-arrow { transform: rotate(180deg); }
+
+  .faq-answer {
+    margin: 0 0 var(--spacing-lg);
+    font-size: 15px;
+    color: var(--color-body);
+    line-height: 1.7;
+  }
+
+  /* Related */
+  .related-section {
+    padding-block: var(--spacing-4xl);
+    background: var(--color-canvas);
+  }
+
+  .related-section .container-page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+  }
+
+  .related-section h2 { margin: 0; color: var(--color-ink); }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+  }
+
+  @media (max-width: 899px) {
+    .related-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 599px) {
+    .uni-title { font-size: 32px; }
+    .related-grid { grid-template-columns: 1fr; }
+  }
+</style>

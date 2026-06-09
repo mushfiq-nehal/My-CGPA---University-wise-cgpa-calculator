@@ -1,0 +1,109 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import UniversityCard from '../../components/UniversityCard.astro';
+import { UNIVERSITIES, getUniversitiesByCountry, COUNTRY_NAMES } from '../../data/universities';
+import type { Country } from '../../data/universities';
+
+const countries: Country[] = ['BD', 'IN', 'PK'];
+---
+
+<Layout
+  title="University CGPA Calculators — Bangladesh, India, Pakistan | MyCGPA"
+  description="Free university-specific CGPA calculators for DU, BRAC, NSU, BUET, IIT Delhi, IIT Bombay, NUST, LUMS and more. Pre-loaded with each university's official grading system."
+  canonical="/universities"
+>
+  <div class="unis-page">
+    <div class="unis-page-hero">
+      <div class="container-page">
+        <span class="caption-mono page-eyebrow">Universities</span>
+        <h1 class="display-xl page-title">University Calculators.</h1>
+        <p class="body-lg page-sub">
+          Each calculator is pre-loaded with the official grading system of that university.
+          Bangladesh, India, and Pakistan — with more coming soon.
+        </p>
+      </div>
+    </div>
+
+    <div class="container-page unis-content">
+      {countries.map((country) => {
+        const unis = getUniversitiesByCountry(country);
+        if (!unis.length) return null;
+        return (
+          <div class="country-section">
+            <div class="country-header">
+              <h2 class="display-md country-title">{COUNTRY_NAMES[country]}</h2>
+              <span class="country-count caption-mono">{unis.length} {unis.length === 1 ? 'university' : 'universities'}</span>
+            </div>
+            <div class="unis-grid">
+              {unis.map(u => <UniversityCard university={u} />)}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .unis-page-hero {
+    background: var(--color-canvas);
+    border-bottom: 1px solid var(--color-hairline);
+    padding-block: var(--spacing-4xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .unis-page-hero .container-page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .page-eyebrow { color: var(--color-mute); }
+
+  .page-title {
+    margin: 0;
+    color: var(--color-ink);
+  }
+
+  .page-sub {
+    margin: 0;
+    color: var(--color-body);
+    max-width: 520px;
+  }
+
+  .unis-content {
+    padding-block: var(--spacing-4xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4xl);
+  }
+
+  .country-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .country-title { margin: 0; color: var(--color-ink); }
+
+  .country-count { color: var(--color-mute); }
+
+  .unis-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+  }
+
+  @media (max-width: 899px) {
+    .unis-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 599px) {
+    .unis-grid { grid-template-columns: 1fr; }
+  }
+</style>

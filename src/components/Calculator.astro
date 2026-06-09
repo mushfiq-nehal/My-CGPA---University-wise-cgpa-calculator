@@ -1,0 +1,640 @@
+---
+import { ALL_GRADING_SYSTEMS, UGC_BANGLADESH } from '../data/gradingSystems';
+
+interface Props {
+  defaultSystemId?: string;
+}
+const { defaultSystemId = 'ugc-bd' } = Astro.props;
+const defaultSystem = ALL_GRADING_SYSTEMS.find(s => s.id === defaultSystemId) ?? UGC_BANGLADESH;
+const systemsJson = JSON.stringify(ALL_GRADING_SYSTEMS);
+---
+
+<section class="calc-section" id="calculator" aria-labelledby="calc-heading">
+  <div class="container-page">
+    <div class="calc-header">
+      <span class="caption-mono calc-eyebrow">Calculator</span>
+      <h2 class="display-lg" id="calc-heading">Calculate your GPA &amp; CGPA.</h2>
+      <p class="body-lg calc-sub">Select a mode, add your courses or semesters, and get your result instantly.</p>
+    </div>
+
+    <div class="calc-card card-level-3">
+      <!-- Controls row -->
+      <div class="calc-controls">
+        <div class="mode-tabs" role="tablist" aria-label="Calculator mode">
+          <button class="mode-tab mode-tab--active" role="tab" aria-selected="true" aria-controls="panel-gpa" id="tab-gpa" data-mode="gpa">
+            Semester GPA
+          </button>
+          <button class="mode-tab" role="tab" aria-selected="false" aria-controls="panel-cgpa" id="tab-cgpa" data-mode="cgpa">
+            CGPA Calculator
+          </button>
+        </div>
+        <div class="system-selector-wrap">
+          <label for="grading-system-select" class="system-label">Grading System</label>
+          <select class="system-select" id="grading-system-select" aria-label="Select grading system">
+            {ALL_GRADING_SYSTEMS.map(s => (
+              <option value={s.id} selected={s.id === defaultSystemId}>{s.shortName}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <!-- GPA Panel -->
+      <div class="calc-panel" id="panel-gpa" role="tabpanel" aria-labelledby="tab-gpa">
+        <div class="table-wrap">
+          <table class="calc-table" id="gpa-table" aria-label="Course list">
+            <thead>
+              <tr>
+                <th scope="col">Course Name</th>
+                <th scope="col">Credit Hours</th>
+                <th scope="col">Grade</th>
+                <th scope="col" aria-label="Remove row"></th>
+              </tr>
+            </thead>
+            <tbody id="gpa-rows"></tbody>
+          </table>
+        </div>
+        <button class="add-row-btn" id="add-course-btn" aria-label="Add a new course">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M7 2V12M2 7H12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          Add Course
+        </button>
+        <div class="result-display" id="gpa-result" aria-live="polite" aria-label="Semester GPA result">
+          <div class="result-inner">
+            <span class="result-label">Semester GPA</span>
+            <span class="result-value" id="gpa-value">—</span>
+            <span class="result-scale" id="gpa-scale">/ 4.00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CGPA Panel -->
+      <div class="calc-panel calc-panel--hidden" id="panel-cgpa" role="tabpanel" aria-labelledby="tab-cgpa" hidden>
+        <div class="table-wrap">
+          <table class="calc-table" id="cgpa-table" aria-label="Semester list">
+            <thead>
+              <tr>
+                <th scope="col">Semester</th>
+                <th scope="col">GPA</th>
+                <th scope="col">Credit Hours</th>
+                <th scope="col" aria-label="Remove row"></th>
+              </tr>
+            </thead>
+            <tbody id="cgpa-rows"></tbody>
+          </table>
+        </div>
+        <button class="add-row-btn" id="add-semester-btn" aria-label="Add a new semester">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M7 2V12M2 7H12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          Add Semester
+        </button>
+        <div class="result-display" id="cgpa-result" aria-live="polite" aria-label="CGPA result">
+          <div class="result-inner">
+            <span class="result-label">Cumulative GPA (CGPA)</span>
+            <span class="result-value" id="cgpa-value">—</span>
+            <span class="result-scale" id="cgpa-scale">/ 4.00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grading Table Toggle -->
+      <div class="grading-table-section">
+        <button class="grading-toggle-btn" id="grading-toggle-btn" aria-expanded="false" aria-controls="grading-table-wrap">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true" class="toggle-arrow">
+            <path d="M3.5 5.5L7 9L10.5 5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          View Grading Table
+        </button>
+        <div class="grading-table-wrap" id="grading-table-wrap" hidden>
+          <p class="grading-table-title" id="grading-system-name">{defaultSystem.name}</p>
+          <div class="table-wrap">
+            <table class="calc-table grading-ref-table" id="grading-ref-table" aria-label="Grading reference table">
+              <thead>
+                <tr>
+                  <th scope="col">Marks Range</th>
+                  <th scope="col">Grade</th>
+                  <th scope="col">Grade Point</th>
+                </tr>
+              </thead>
+              <tbody id="grading-ref-body">
+                {defaultSystem.entries.map(e => (
+                  <tr>
+                    <td>{e.minMark === 0 ? `Below ${e.maxMark + 1}` : `${e.minMark}–${e.maxMark}`}</td>
+                    <td><strong>{e.grade}</strong></td>
+                    <td>{e.point.toFixed(2)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .calc-section {
+    padding-block: var(--spacing-5xl);
+    background-color: var(--color-canvas-soft);
+  }
+
+  .calc-header {
+    text-align: center;
+    margin-bottom: var(--spacing-3xl);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+  }
+
+  .calc-eyebrow {
+    color: var(--color-mute);
+  }
+
+  .calc-header h2 {
+    margin: 0;
+    color: var(--color-ink);
+  }
+
+  .calc-sub {
+    margin: 0;
+    color: var(--color-body);
+    max-width: 480px;
+    text-align: center;
+  }
+
+  .calc-card {
+    background: var(--color-canvas);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .calc-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-bottom: 1px solid var(--color-hairline);
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+  }
+
+  .mode-tabs {
+    display: flex;
+    background: var(--color-canvas-soft);
+    border-radius: var(--radius-pill-sm);
+    padding: 3px;
+    gap: 2px;
+  }
+
+  .mode-tab {
+    padding: 6px var(--spacing-md);
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--color-body);
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-pill-sm);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    letter-spacing: -0.28px;
+  }
+
+  .mode-tab--active {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    font-weight: 500;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+
+  .system-selector-wrap {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+  }
+
+  .system-label {
+    font-size: 13px;
+    color: var(--color-mute);
+    letter-spacing: -0.28px;
+    white-space: nowrap;
+  }
+
+  .system-select {
+    height: 32px;
+    padding: 0 var(--spacing-sm);
+    font-size: 13px;
+    font-family: var(--font-sans);
+    color: var(--color-ink);
+    background: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .system-select:focus {
+    border-color: var(--color-ink);
+  }
+
+  .calc-panel {
+    padding: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .calc-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  .calc-table th {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-mute);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    text-align: left;
+    border-bottom: 1px solid var(--color-hairline);
+    background: var(--color-canvas-soft);
+    white-space: nowrap;
+  }
+
+  .calc-table td {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-bottom: 1px solid var(--color-hairline);
+    vertical-align: middle;
+  }
+
+  .calc-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .calc-table input,
+  .calc-table select {
+    width: 100%;
+    height: 36px;
+    padding: 0 var(--spacing-xs);
+    font-size: 14px;
+    font-family: var(--font-sans);
+    color: var(--color-ink);
+    background: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-sm);
+    outline: none;
+    transition: border-color 0.15s;
+    min-width: 60px;
+  }
+
+  .calc-table input:focus,
+  .calc-table select:focus {
+    border-color: var(--color-ink);
+  }
+
+  .calc-table input[type="text"] { min-width: 140px; }
+  .calc-table input[type="number"] { min-width: 80px; }
+  .calc-table select { min-width: 90px; }
+
+  .remove-row-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: transparent;
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    color: var(--color-mute);
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+    flex-shrink: 0;
+  }
+
+  .remove-row-btn:hover {
+    color: var(--color-error);
+    border-color: var(--color-error);
+    background: var(--color-error-soft);
+  }
+
+  .add-row-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    height: 36px;
+    padding: 0 var(--spacing-md);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-ink);
+    background: var(--color-canvas-soft);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    align-self: flex-start;
+    letter-spacing: -0.28px;
+  }
+
+  .add-row-btn:hover {
+    background: var(--color-canvas-soft-2);
+    border-color: var(--color-hairline-strong);
+  }
+
+  .result-display {
+    background: var(--color-canvas-soft);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg) var(--spacing-xl);
+  }
+
+  .result-inner {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+  }
+
+  .result-label {
+    font-size: 14px;
+    color: var(--color-mute);
+    letter-spacing: -0.28px;
+    margin-right: auto;
+  }
+
+  .result-value {
+    font-size: 40px;
+    font-weight: 600;
+    color: var(--color-ink);
+    letter-spacing: -2px;
+    line-height: 1;
+    font-feature-settings: "tnum";
+    transition: color 0.2s;
+  }
+
+  .result-scale {
+    font-size: 16px;
+    color: var(--color-mute);
+    align-self: flex-end;
+    padding-bottom: 4px;
+  }
+
+  .grading-table-section {
+    border-top: 1px solid var(--color-hairline);
+    padding: var(--spacing-md) var(--spacing-lg);
+  }
+
+  .grading-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--color-body);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    letter-spacing: -0.28px;
+    transition: color 0.15s;
+  }
+
+  .grading-toggle-btn:hover { color: var(--color-ink); }
+
+  .toggle-arrow {
+    transition: transform 0.2s ease;
+  }
+
+  .grading-toggle-btn[aria-expanded="true"] .toggle-arrow {
+    transform: rotate(180deg);
+  }
+
+  .grading-table-wrap {
+    margin-top: var(--spacing-md);
+  }
+
+  .grading-table-title {
+    font-size: 13px;
+    color: var(--color-mute);
+    margin: 0 0 var(--spacing-sm);
+    letter-spacing: -0.28px;
+  }
+
+  .grading-ref-table td:nth-child(2) strong {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 400;
+  }
+
+  @media (max-width: 599px) {
+    .calc-controls {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .result-value { font-size: 32px; }
+  }
+</style>
+
+<script define:vars={{ systemsJson, defaultSystemId }}>
+  const SYSTEMS = JSON.parse(systemsJson);
+  let currentSystemId = defaultSystemId;
+
+  function getSystem() {
+    return SYSTEMS.find(s => s.id === currentSystemId) ?? SYSTEMS[0];
+  }
+
+  function buildGradeOptions(selectedGrade) {
+    const sys = getSystem();
+    return sys.entries.map(e =>
+      `<option value="${e.point}" ${selectedGrade === String(e.point) ? 'selected' : ''}>${e.grade} (${e.point.toFixed(2)})</option>`
+    ).join('');
+  }
+
+  // ── GPA Mode ───────────────────────────────────────────────────────────────
+  let gpaRowCount = 0;
+
+  function addGpaRow() {
+    gpaRowCount++;
+    const tbody = document.getElementById('gpa-rows');
+    const id = `gpa-row-${gpaRowCount}`;
+    const tr = document.createElement('tr');
+    tr.id = id;
+    tr.innerHTML = `
+      <td><input type="text" placeholder="e.g. Mathematics" aria-label="Course name" value="" /></td>
+      <td><input type="number" min="0.5" max="6" step="0.5" value="3" aria-label="Credit hours" /></td>
+      <td><select aria-label="Grade">${buildGradeOptions('')}</select></td>
+      <td>
+        <button class="remove-row-btn" data-target="${id}" aria-label="Remove course">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M2 2L10 10M10 2L2 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+    tr.querySelectorAll('input, select').forEach(el => el.addEventListener('change', calcGpa));
+    tr.querySelector('.remove-row-btn').addEventListener('click', (e) => {
+      document.getElementById(e.currentTarget.dataset.target)?.remove();
+      calcGpa();
+    });
+    calcGpa();
+  }
+
+  function calcGpa() {
+    const rows = document.querySelectorAll('#gpa-rows tr');
+    let totalPoints = 0, totalCredits = 0;
+    rows.forEach(row => {
+      const credits = parseFloat(row.querySelectorAll('input')[1]?.value) || 0;
+      const gradePoint = parseFloat(row.querySelector('select')?.value) || 0;
+      if (credits > 0) {
+        totalPoints += credits * gradePoint;
+        totalCredits += credits;
+      }
+    });
+    const gpa = totalCredits > 0 ? (totalPoints / totalCredits) : null;
+    const el = document.getElementById('gpa-value');
+    const scale = document.getElementById('gpa-scale');
+    if (el) el.textContent = gpa !== null ? gpa.toFixed(2) : '—';
+    if (scale) scale.textContent = `/ ${getSystem().maxGPA.toFixed(2)}`;
+  }
+
+  // ── CGPA Mode ──────────────────────────────────────────────────────────────
+  let cgpaRowCount = 0;
+
+  function addCgpaRow() {
+    cgpaRowCount++;
+    const tbody = document.getElementById('cgpa-rows');
+    const id = `cgpa-row-${cgpaRowCount}`;
+    const tr = document.createElement('tr');
+    tr.id = id;
+    const semLabel = `Semester ${cgpaRowCount}`;
+    tr.innerHTML = `
+      <td><input type="text" value="${semLabel}" aria-label="Semester name" /></td>
+      <td><input type="number" min="0" max="${getSystem().maxGPA}" step="0.01" placeholder="3.50" aria-label="Semester GPA" /></td>
+      <td><input type="number" min="1" max="30" step="0.5" value="15" aria-label="Credit hours" /></td>
+      <td>
+        <button class="remove-row-btn" data-target="${id}" aria-label="Remove semester">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M2 2L10 10M10 2L2 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+    tr.querySelectorAll('input').forEach(el => el.addEventListener('input', calcCgpa));
+    tr.querySelector('.remove-row-btn').addEventListener('click', (e) => {
+      document.getElementById(e.currentTarget.dataset.target)?.remove();
+      calcCgpa();
+    });
+    calcCgpa();
+  }
+
+  function calcCgpa() {
+    const rows = document.querySelectorAll('#cgpa-rows tr');
+    let totalPoints = 0, totalCredits = 0;
+    rows.forEach(row => {
+      const inputs = row.querySelectorAll('input');
+      const gpa = parseFloat(inputs[1]?.value) || 0;
+      const credits = parseFloat(inputs[2]?.value) || 0;
+      if (credits > 0 && gpa > 0) {
+        totalPoints += gpa * credits;
+        totalCredits += credits;
+      }
+    });
+    const cgpa = totalCredits > 0 ? (totalPoints / totalCredits) : null;
+    const el = document.getElementById('cgpa-value');
+    const scale = document.getElementById('cgpa-scale');
+    if (el) el.textContent = cgpa !== null ? cgpa.toFixed(2) : '—';
+    if (scale) scale.textContent = `/ ${getSystem().maxGPA.toFixed(2)}`;
+  }
+
+  // ── Grading System Switch ──────────────────────────────────────────────────
+  function updateGradingSystem(newId) {
+    currentSystemId = newId;
+    const sys = getSystem();
+
+    // Update grading ref table
+    const refBody = document.getElementById('grading-ref-body');
+    if (refBody) {
+      refBody.innerHTML = sys.entries.map(e =>
+        `<tr><td>${e.minMark === 0 ? `Below ${e.maxMark + 1}` : `${e.minMark}–${e.maxMark}`}</td><td><strong>${e.grade}</strong></td><td>${e.point.toFixed(2)}</td></tr>`
+      ).join('');
+    }
+
+    const nameEl = document.getElementById('grading-system-name');
+    if (nameEl) nameEl.textContent = sys.name;
+
+    // Rebuild grade dropdowns in GPA table keeping current credit values
+    document.querySelectorAll('#gpa-rows tr').forEach(row => {
+      const select = row.querySelector('select');
+      if (select) select.innerHTML = buildGradeOptions('');
+    });
+
+    // Update CGPA GPA max
+    document.querySelectorAll('#cgpa-rows tr input[type="number"]:nth-child(2)').forEach(inp => {
+      inp.max = sys.maxGPA;
+    });
+
+    calcGpa();
+    calcCgpa();
+
+    // Update scale displays
+    document.getElementById('gpa-scale').textContent = `/ ${sys.maxGPA.toFixed(2)}`;
+    document.getElementById('cgpa-scale').textContent = `/ ${sys.maxGPA.toFixed(2)}`;
+  }
+
+  // ── Mode Tabs ──────────────────────────────────────────────────────────────
+  document.querySelectorAll('.mode-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const mode = btn.dataset.mode;
+      document.querySelectorAll('.mode-tab').forEach(t => {
+        t.classList.remove('mode-tab--active');
+        t.setAttribute('aria-selected', 'false');
+      });
+      btn.classList.add('mode-tab--active');
+      btn.setAttribute('aria-selected', 'true');
+
+      const gpaPanel = document.getElementById('panel-gpa');
+      const cgpaPanel = document.getElementById('panel-cgpa');
+      if (mode === 'gpa') {
+        gpaPanel.hidden = false;
+        cgpaPanel.hidden = true;
+      } else {
+        gpaPanel.hidden = true;
+        cgpaPanel.hidden = false;
+      }
+    });
+  });
+
+  // ── Grading Toggle ─────────────────────────────────────────────────────────
+  const gradingToggle = document.getElementById('grading-toggle-btn');
+  const gradingWrap = document.getElementById('grading-table-wrap');
+  gradingToggle?.addEventListener('click', () => {
+    const isOpen = !gradingWrap.hidden;
+    gradingWrap.hidden = isOpen;
+    gradingToggle.setAttribute('aria-expanded', String(!isOpen));
+  });
+
+  // ── System Select ──────────────────────────────────────────────────────────
+  document.getElementById('grading-system-select')?.addEventListener('change', (e) => {
+    updateGradingSystem(e.target.value);
+  });
+
+  // ── Add Row Buttons ────────────────────────────────────────────────────────
+  document.getElementById('add-course-btn')?.addEventListener('click', addGpaRow);
+  document.getElementById('add-semester-btn')?.addEventListener('click', addCgpaRow);
+
+  // ── Init with 3 GPA rows & 2 CGPA rows ────────────────────────────────────
+  addGpaRow(); addGpaRow(); addGpaRow();
+  addCgpaRow(); addCgpaRow();
+</script>

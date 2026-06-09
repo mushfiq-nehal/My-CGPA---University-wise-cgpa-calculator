@@ -1,0 +1,209 @@
+---
+const footerColumns = [
+  {
+    label: 'Product',
+    links: [
+      { href: '/#calculator', label: 'CGPA Calculator' },
+      { href: '/#formula', label: 'How It Works' },
+      { href: '/universities', label: 'University Calculators' },
+    ],
+  },
+  {
+    label: 'Bangladesh',
+    links: [
+      { href: '/universities/du-cgpa-calculator', label: 'DU CGPA Calculator' },
+      { href: '/universities/brac-cgpa-calculator', label: 'BRACU CGPA Calculator' },
+      { href: '/universities/nsu-cgpa-calculator', label: 'NSU CGPA Calculator' },
+      { href: '/universities/buet-cgpa-calculator', label: 'BUET CGPA Calculator' },
+      { href: '/universities/sust-cgpa-calculator', label: 'SUST CGPA Calculator' },
+    ],
+  },
+  {
+    label: 'India & Pakistan',
+    links: [
+      { href: '/universities/iit-delhi-cgpa-calculator', label: 'IIT Delhi GPA Calculator' },
+      { href: '/universities/iit-bombay-cgpa-calculator', label: 'IIT Bombay GPA Calculator' },
+      { href: '/universities/nust-cgpa-calculator', label: 'NUST CGPA Calculator' },
+      { href: '/universities/lums-cgpa-calculator', label: 'LUMS GPA Calculator' },
+    ],
+  },
+  {
+    label: 'Resources',
+    links: [
+      { href: '/#formula', label: 'CGPA Formula' },
+      { href: '/universities', label: 'All Universities' },
+      { href: '/#faq', label: 'FAQ' },
+    ],
+  },
+];
+---
+
+<footer class="site-footer" role="contentinfo">
+  <div class="footer-inner container-page">
+    <!-- Top: Logo + columns -->
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="/" class="footer-logo" aria-label="MyCGPA Home">
+          <span class="logo-text">MyCGPA</span><span class="logo-dot">.com</span>
+        </a>
+        <p class="footer-tagline">
+          Free CGPA &amp; GPA calculators for students worldwide.
+        </p>
+      </div>
+
+      <div class="footer-columns">
+        {footerColumns.map((col) => (
+          <div class="footer-column">
+            <p class="footer-col-label caption-mono">{col.label}</p>
+            <ul role="list">
+              {col.links.map((link) => (
+                <li>
+                  <a href={link.href} class="footer-link">{link.label}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Bottom: copyright -->
+    <div class="footer-bottom">
+      <p class="footer-copyright">
+        &copy; {new Date().getFullYear()} MyCGPA.com. All rights reserved.
+      </p>
+      <p class="footer-note">
+        Built for students in Bangladesh, India &amp; Pakistan.
+      </p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background-color: var(--color-canvas);
+    border-top: 1px solid var(--color-hairline);
+    margin-top: auto;
+  }
+
+  .footer-inner {
+    padding-block: var(--spacing-4xl);
+  }
+
+  .footer-top {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: var(--spacing-4xl);
+    margin-bottom: var(--spacing-3xl);
+  }
+
+  .footer-brand {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .footer-logo {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 2px;
+    text-decoration: none;
+  }
+
+  .logo-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-ink);
+    letter-spacing: -0.5px;
+  }
+
+  .logo-dot {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--color-mute);
+  }
+
+  .footer-tagline {
+    font-size: 14px;
+    color: var(--color-mute);
+    line-height: 1.5;
+    margin: 0;
+    max-width: 180px;
+  }
+
+  .footer-columns {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-xl);
+  }
+
+  .footer-column ul {
+    list-style: none;
+    padding: 0;
+    margin: var(--spacing-sm) 0 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+
+  .footer-col-label {
+    margin: 0;
+    color: var(--color-mute);
+    font-size: 11px;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .footer-link {
+    font-size: 14px;
+    color: var(--color-body);
+    text-decoration: none;
+    letter-spacing: -0.28px;
+    transition: color 0.15s ease;
+  }
+
+  .footer-link:hover {
+    color: var(--color-ink);
+  }
+
+  .footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--color-hairline);
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+  }
+
+  .footer-copyright,
+  .footer-note {
+    font-size: 12px;
+    color: var(--color-mute);
+    margin: 0;
+  }
+
+  @media (max-width: 899px) {
+    .footer-top {
+      grid-template-columns: 1fr;
+      gap: var(--spacing-xl);
+    }
+
+    .footer-columns {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 599px) {
+    .footer-columns {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-lg);
+    }
+
+    .footer-bottom {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>

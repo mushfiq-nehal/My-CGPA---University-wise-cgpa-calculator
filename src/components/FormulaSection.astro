@@ -1,0 +1,400 @@
+---
+const steps = [
+  {
+    num: '01',
+    title: 'List your courses',
+    body: 'Enter each course with its credit hours. A 3-credit course counts three times more than a 1-credit one.',
+  },
+  {
+    num: '02',
+    title: 'Map grades to points',
+    body: 'Each letter grade (A+, A, B+...) has a grade point value. For UGC Bangladesh: A+ = 4.00, A = 3.75, A- = 3.50.',
+  },
+  {
+    num: '03',
+    title: 'Multiply and sum',
+    body: 'For each course: Credits × Grade Point. Then add all of these together to get the total weighted points.',
+  },
+  {
+    num: '04',
+    title: 'Divide by total credits',
+    body: 'Divide the total weighted points by total credit hours. This gives your CGPA — the weighted average.',
+  },
+];
+
+const faqs = [
+  {
+    q: 'What is the difference between GPA and CGPA?',
+    a: 'GPA (Grade Point Average) is calculated for a single semester. CGPA (Cumulative Grade Point Average) is the weighted average of all GPA values across all semesters — giving a picture of your overall academic performance.',
+  },
+  {
+    q: 'Can I convert CGPA to percentage?',
+    a: 'For UGC Bangladesh: Percentage ≈ CGPA × 25. For example, CGPA 3.50 ≈ 87.5%. For IITs (India): Percentage = (CGPA - 0.5) × 10. Always verify with your university\'s official conversion policy.',
+  },
+  {
+    q: 'What is a good CGPA?',
+    a: 'On the UGC 4.0 scale: 3.75+ is excellent (equivalent to A), 3.00–3.74 is First Class, 2.50–2.99 is Second Class Upper. On India\'s 10-point scale: 8.0+ is considered excellent.',
+  },
+  {
+    q: 'Does credit hour weighting matter?',
+    a: 'Yes — critically. A 4-credit course has 4x the impact on your GPA as a 1-credit course. Getting an A+ in a high-credit course boosts your CGPA significantly more than the same grade in a 1-credit course.',
+  },
+];
+---
+
+<section class="formula-section" id="formula" aria-labelledby="formula-heading">
+  <div class="container-page">
+    <!-- Header -->
+    <div class="section-header">
+      <span class="caption-mono section-eyebrow">How It Works</span>
+      <h2 class="display-lg" id="formula-heading">The CGPA formula, explained.</h2>
+      <p class="body-lg section-sub">Simple enough for first-year students. Precise enough for academic planning.</p>
+    </div>
+
+    <!-- Formula display -->
+    <div class="formula-block">
+      <div class="formula-code-card">
+        <div class="formula-code-header">
+          <span class="caption-mono formula-label">CGPA Formula</span>
+          <div class="code-dots" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+        <div class="formula-code-body">
+          <p class="formula-math">
+            CGPA =
+            <span class="formula-fraction">
+              <span class="formula-num">Σ (Credit Hours × Grade Point)</span>
+              <span class="formula-line" aria-hidden="true"></span>
+              <span class="formula-den">Σ (Credit Hours)</span>
+            </span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Example -->
+      <div class="formula-example">
+        <p class="caption-mono example-label">Example Calculation</p>
+        <div class="table-wrap">
+          <table class="example-table" aria-label="CGPA calculation example">
+            <thead>
+              <tr>
+                <th scope="col">Course</th>
+                <th scope="col">Credits</th>
+                <th scope="col">Grade</th>
+                <th scope="col">Points</th>
+                <th scope="col">Weighted</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Mathematics</td><td>4</td><td>A+ (4.00)</td><td>4.00</td><td>16.00</td></tr>
+              <tr><td>Physics</td><td>3</td><td>A (3.75)</td><td>3.75</td><td>11.25</td></tr>
+              <tr><td>Programming</td><td>3</td><td>A+ (4.00)</td><td>4.00</td><td>12.00</td></tr>
+              <tr><td>English</td><td>2</td><td>B+ (3.25)</td><td>3.25</td><td>6.50</td></tr>
+              <tr class="example-total">
+                <td><strong>Total</strong></td>
+                <td><strong>12</strong></td>
+                <td>—</td>
+                <td>—</td>
+                <td><strong>45.75</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="example-result">
+          <span class="example-result-formula">GPA = 45.75 ÷ 12 =</span>
+          <span class="example-result-value">3.81</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Steps -->
+    <div class="steps-grid">
+      {steps.map(step => (
+        <div class="step-card">
+          <span class="step-num caption-mono">{step.num}</span>
+          <h3 class="step-title">{step.title}</h3>
+          <p class="step-body">{step.body}</p>
+        </div>
+      ))}
+    </div>
+
+    <!-- FAQ -->
+    <div class="faq-section" id="faq" aria-labelledby="faq-heading">
+      <h3 class="display-md" id="faq-heading">Frequently asked questions.</h3>
+      <div class="faq-list">
+        {faqs.map((item, i) => (
+          <details class="faq-item" id={`faq-${i}`}>
+            <summary class="faq-question">
+              <span>{item.q}</span>
+              <svg class="faq-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </summary>
+            <p class="faq-answer">{item.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .formula-section {
+    padding-block: var(--spacing-5xl);
+    background-color: var(--color-canvas);
+    border-top: 1px solid var(--color-hairline);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: var(--spacing-3xl);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+  }
+
+  .section-eyebrow { color: var(--color-mute); }
+
+  .section-header h2 { margin: 0; color: var(--color-ink); }
+
+  .section-sub {
+    margin: 0;
+    color: var(--color-body);
+    max-width: 480px;
+  }
+
+  /* Formula block */
+  .formula-block {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-3xl);
+    align-items: start;
+  }
+
+  .formula-code-card {
+    background: var(--color-ink);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .formula-code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .formula-label { color: rgba(255,255,255,0.5); }
+
+  .code-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .code-dots span {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+  }
+
+  .formula-code-body {
+    padding: var(--spacing-xl) var(--spacing-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .formula-math {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    font-size: 16px;
+    font-weight: 500;
+    color: #fff;
+    margin: 0;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .formula-fraction {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .formula-num, .formula-den {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--color-cyan);
+    white-space: nowrap;
+  }
+
+  .formula-line {
+    display: block;
+    width: 100%;
+    height: 1px;
+    background: rgba(255,255,255,0.3);
+  }
+
+  /* Example table */
+  .formula-example {
+    background: var(--color-canvas-soft);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .example-label { color: var(--color-mute); }
+
+  .table-wrap { overflow-x: auto; }
+
+  .example-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .example-table th {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-mute);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    text-align: left;
+    border-bottom: 1px solid var(--color-hairline);
+    white-space: nowrap;
+  }
+
+  .example-table td {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-bottom: 1px solid var(--color-hairline);
+    color: var(--color-body);
+  }
+
+  .example-total td { color: var(--color-ink); border-bottom: none; }
+
+  .example-result {
+    display: flex;
+    align-items: baseline;
+    gap: var(--spacing-sm);
+    padding-top: var(--spacing-sm);
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  .example-result-formula {
+    font-size: 14px;
+    color: var(--color-body);
+    font-family: var(--font-mono);
+  }
+
+  .example-result-value {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--color-ink);
+    letter-spacing: -1px;
+  }
+
+  /* Steps */
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-3xl);
+  }
+
+  .step-card {
+    background: var(--color-canvas-soft);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+
+  .step-card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    transform: translateY(-2px);
+  }
+
+  .step-num { color: var(--color-mute); font-size: 11px; }
+
+  .step-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-ink);
+    letter-spacing: -0.5px;
+  }
+
+  .step-body {
+    margin: 0;
+    font-size: 14px;
+    color: var(--color-body);
+    line-height: 1.6;
+  }
+
+  /* FAQ */
+  .faq-section { margin-top: var(--spacing-3xl); }
+
+  .faq-section h3 { margin: 0 0 var(--spacing-xl); color: var(--color-ink); }
+
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  .faq-item {
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .faq-question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg) 0;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--color-ink);
+    cursor: pointer;
+    list-style: none;
+    letter-spacing: -0.4px;
+  }
+
+  .faq-question::-webkit-details-marker { display: none; }
+
+  .faq-arrow { flex-shrink: 0; transition: transform 0.2s; }
+
+  details[open] .faq-arrow { transform: rotate(180deg); }
+
+  .faq-answer {
+    margin: 0 0 var(--spacing-lg);
+    font-size: 15px;
+    color: var(--color-body);
+    line-height: 1.7;
+  }
+
+  @media (max-width: 899px) {
+    .formula-block { grid-template-columns: 1fr; }
+    .steps-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 599px) {
+    .steps-grid { grid-template-columns: 1fr; }
+  }
+</style>

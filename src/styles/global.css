@@ -1,0 +1,212 @@
+/* ─── Google Fonts ─────────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap');
+
+@import "tailwindcss";
+
+/* ─── Design System Tokens (DESIGN.md) ────────────────────────────────────── */
+@theme {
+  /* Colors */
+  --color-ink: #171717;
+  --color-canvas: #ffffff;
+  --color-canvas-soft: #fafafa;
+  --color-canvas-soft-2: #f5f5f5;
+  --color-body: #4d4d4d;
+  --color-mute: #888888;
+  --color-hairline: #ebebeb;
+  --color-hairline-strong: #a1a1a1;
+  --color-on-primary: #ffffff;
+  --color-link: #0070f3;
+  --color-link-deep: #0761d1;
+  --color-link-bg-soft: #d3e5ff;
+  --color-success: #0070f3;
+  --color-error: #ee0000;
+  --color-error-soft: #f7d4d6;
+  --color-warning: #f5a623;
+  --color-warning-soft: #ffefcf;
+  --color-cyan: #50e3c2;
+  --color-violet: #7928ca;
+  --color-highlight-pink: #ff0080;
+
+  /* Typography */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Spacing */
+  --spacing-xxs: 4px;
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 40px;
+  --spacing-3xl: 48px;
+  --spacing-4xl: 64px;
+  --spacing-5xl: 96px;
+  --spacing-6xl: 128px;
+  --spacing-section: 192px;
+
+  /* Border Radius */
+  --radius-none: 0px;
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-pill-sm: 64px;
+  --radius-pill: 100px;
+  --radius-full: 9999px;
+}
+
+/* ─── Base ─────────────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-canvas-soft);
+  color: var(--color-ink);
+  margin: 0;
+  line-height: 1.5;
+}
+
+::selection {
+  background-color: var(--color-ink);
+  color: #f2f2f2;
+}
+
+/* ─── Typography Utilities ─────────────────────────────────────────────────── */
+@utility display-xl {
+  font-family: var(--font-sans);
+  font-size: 48px;
+  font-weight: 600;
+  line-height: 48px;
+  letter-spacing: -2.4px;
+}
+
+@utility display-lg {
+  font-family: var(--font-sans);
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 40px;
+  letter-spacing: -1.28px;
+}
+
+@utility display-md {
+  font-family: var(--font-sans);
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 32px;
+  letter-spacing: -0.96px;
+}
+
+@utility display-sm {
+  font-family: var(--font-sans);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 28px;
+  letter-spacing: -0.6px;
+}
+
+@utility body-lg {
+  font-family: var(--font-sans);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 28px;
+}
+
+@utility body-md {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+}
+
+@utility body-sm {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: -0.28px;
+}
+
+@utility caption-mono {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ─── Layout Utilities ─────────────────────────────────────────────────────── */
+@utility container-page {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: var(--spacing-lg);
+}
+
+@utility section-padding {
+  padding-block: var(--spacing-5xl);
+}
+
+@utility section-padding-hero {
+  padding-block: var(--spacing-section);
+}
+
+/* ─── Card Elevation System ────────────────────────────────────────────────── */
+@utility card-level-1 {
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+}
+
+@utility card-level-2 {
+  box-shadow:
+    0px 1px 1px rgba(0,0,0,0.02),
+    0px 2px 2px rgba(0,0,0,0.04),
+    inset 0 0 0 1px rgba(0,0,0,0.08);
+}
+
+@utility card-level-3 {
+  box-shadow:
+    0px 2px 2px rgba(0,0,0,0.04),
+    0px 8px 8px -8px rgba(0,0,0,0.04),
+    inset 0 0 0 1px rgba(0,0,0,0.08);
+}
+
+@utility card-level-4 {
+  box-shadow:
+    0px 2px 2px rgba(0,0,0,0.04),
+    0px 8px 16px -4px rgba(0,0,0,0.04),
+    inset 0 0 0 1px rgba(0,0,0,0.08);
+}
+
+/* ─── Focus Ring ────────────────────────────────────────────────────────────── */
+@utility focus-ring {
+  outline: 2px solid var(--color-link);
+  outline-offset: 2px;
+}
+
+/* ─── Mesh Gradient (hero backdrop) ───────────────────────────────────────── */
+.mesh-gradient {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0,124,240,0.18) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 80% 20%, rgba(121,40,202,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 20% 30%, rgba(0,223,216,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 70% 60%, rgba(255,0,128,0.08) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── Hairline divider ─────────────────────────────────────────────────────── */
+.hairline {
+  border-color: var(--color-hairline);
+}

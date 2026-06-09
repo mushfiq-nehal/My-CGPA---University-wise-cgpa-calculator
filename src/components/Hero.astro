@@ -1,0 +1,225 @@
+---
+const trustIndicators = [
+  'No Signup Required',
+  'Free Forever',
+  'Instant Results',
+  'Accurate Calculations',
+];
+---
+
+<section class="hero" aria-labelledby="hero-headline">
+  <!-- Atmospheric mesh gradient backdrop -->
+  <div class="mesh-gradient" aria-hidden="true"></div>
+
+  <div class="hero-inner container-page">
+    <!-- Announcement pill -->
+    <div class="hero-badge-wrap">
+      <span class="hero-badge">
+        <span class="hero-badge-dot" aria-hidden="true"></span>
+        Supporting 10+ grading systems &amp; universities across South Asia
+      </span>
+    </div>
+
+    <!-- Headline -->
+    <h1 class="hero-headline" id="hero-headline">
+      Calculate Your CGPA Instantly.
+    </h1>
+
+    <!-- Subheadline -->
+    <p class="hero-sub">
+      Free CGPA, GPA, and Percentage Calculators for universities and grading systems worldwide.
+    </p>
+
+    <!-- CTA Row -->
+    <div class="hero-cta-row" role="group" aria-label="Get started">
+      <a href="#calculator" class="btn-hero-primary" id="hero-cta-calculate">
+        Calculate CGPA
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M2.5 7H11.5M8 3.5L11.5 7L8 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      <a href="/universities" class="btn-hero-secondary" id="hero-cta-universities">
+        Browse Universities
+      </a>
+    </div>
+
+    <!-- Trust indicators -->
+    <div class="trust-strip" role="list" aria-label="Platform features">
+      {trustIndicators.map((item) => (
+        <div class="trust-item" role="listitem">
+          <svg class="trust-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M2 7L5.5 10.5L12 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>{item}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--color-canvas);
+    padding-block: var(--spacing-section);
+    text-align: center;
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .hero-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xl);
+  }
+
+  /* Announcement pill */
+  .hero-badge-wrap {
+    display: flex;
+    justify-content: center;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background-color: var(--color-canvas-soft);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-full);
+    font-size: 13px;
+    color: var(--color-body);
+    letter-spacing: -0.28px;
+  }
+
+  .hero-badge-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: var(--color-cyan);
+    flex-shrink: 0;
+    box-shadow: 0 0 6px rgba(80, 227, 194, 0.7);
+  }
+
+  /* Headline */
+  .hero-headline {
+    margin: 0;
+    font-size: clamp(36px, 6vw, 60px);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: clamp(-1.5px, -0.04em, -2.8px);
+    color: var(--color-ink);
+    max-width: 700px;
+  }
+
+  /* Subheadline */
+  .hero-sub {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 28px;
+    color: var(--color-body);
+    max-width: 500px;
+  }
+
+  /* CTAs */
+  .hero-cta-row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .btn-hero-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    height: 44px;
+    padding: 0 var(--spacing-lg);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--color-on-primary);
+    background-color: var(--color-ink);
+    border-radius: var(--radius-pill);
+    text-decoration: none;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+  }
+
+  .btn-hero-primary:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+  }
+
+  .btn-hero-secondary {
+    display: inline-flex;
+    align-items: center;
+    height: 44px;
+    padding: 0 var(--spacing-lg);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--color-ink);
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-pill);
+    text-decoration: none;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+
+  .btn-hero-secondary:hover {
+    border-color: var(--color-hairline-strong);
+    transform: translateY(-1px);
+  }
+
+  /* Trust strip */
+  .trust-strip {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: var(--spacing-sm);
+  }
+
+  .trust-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--color-mute);
+    letter-spacing: -0.28px;
+  }
+
+  .trust-icon {
+    color: var(--color-ink);
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 599px) {
+    .hero {
+      padding-block: var(--spacing-5xl);
+    }
+
+    .hero-inner {
+      gap: var(--spacing-lg);
+    }
+
+    .hero-sub {
+      font-size: 16px;
+    }
+
+    .btn-hero-primary,
+    .btn-hero-secondary {
+      height: 40px;
+      font-size: 15px;
+      padding: 0 var(--spacing-md);
+    }
+
+    .trust-strip {
+      gap: var(--spacing-md);
+    }
+  }
+</style>
