@@ -34,11 +34,58 @@ const breadcrumbSchema = {
     { '@type': 'ListItem', position: 3, name: `${u.shortName} CGPA Calculator`, item: `https://mycgpa.com/universities/${u.slug}` },
   ],
 };
+
+const keywordOverrides: Record<string, { title: string; description: string }> = {
+  'nu-cgpa-calculator': {
+    title: 'NU CGPA Calculator — National University CGPA Calculator | MyCGPA',
+    description: 'Free National University (NU) CGPA calculator. Calculate your NU CGPA instantly using the official NU/UGC Bangladesh grading system.',
+  },
+  'brac-cgpa-calculator': {
+    title: 'BRACU CGPA Calculator — BRAC University GPA Calculator | MyCGPA',
+    description: 'Free BRAC University (BRACU) CGPA calculator. Calculate your BRACU semester GPA or CGPA instantly using the official 13-tier grading scale.',
+  },
+  'uiu-cgpa-calculator': {
+    title: 'UIU CGPA Calculator — United International University | MyCGPA',
+    description: 'Free United International University (UIU) CGPA calculator. Calculate your UIU GPA/CGPA instantly using the official 10-tier grading scale.',
+  },
+  'iub-cgpa-calculator': {
+    title: 'IUB CGPA Calculator — Independent University Bangladesh | MyCGPA',
+    description: 'Free Independent University, Bangladesh (IUB) CGPA calculator. Convert your marks and calculate your IUB GPA/CGPA online instantly.',
+  },
+  'vit-cgpa-calculator': {
+    title: 'VIT CGPA Calculator — Vellore Institute of Technology GPA | MyCGPA',
+    description: 'Free Vellore Institute of Technology (VIT) CGPA calculator. Calculate your VIT GPA & CGPA instantly using the official relative grading system.',
+  },
+  'srm-cgpa-calculator': {
+    title: 'SRM CGPA Calculator — SRM IST GPA & CGPA Calculator | MyCGPA',
+    description: 'Free SRM Institute of Science and Technology (SRMIST) CGPA calculator. Calculate your SRM GPA/CGPA based on the absolute 10-point scale.',
+  },
+  'ktu-cgpa-calculator': {
+    title: 'KTU CGPA Calculator — APJ Abdul Kalam Technological University | MyCGPA',
+    description: 'Free APJ Abdul Kalam Technological University (KTU Kerala) CGPA calculator. Calculate your KTU SGPA & CGPA based on the official regulations.',
+  },
+  'ipu-cgpa-calculator': {
+    title: 'IPU CGPA Calculator — Guru Gobind Singh Indraprastha University | MyCGPA',
+    description: 'Free GGSIPU IPU CGPA calculator. Easily calculate your IPU SGPA & CGPA based on the official 10-point absolute grading scale.',
+  },
+  'saveetha-cgpa-calculator': {
+    title: 'Saveetha CGPA Calculator — Saveetha University GPA | MyCGPA',
+    description: 'Free Saveetha Institute of Medical and Technical Sciences (Saveetha University) CGPA calculator. Calculate your GPA & CGPA instantly.',
+  },
+  'uaf-cgpa-calculator': {
+    title: 'UAF CGPA Calculator — University of Agriculture Faisalabad | MyCGPA',
+    description: 'Free University of Agriculture Faisalabad (UAF) CGPA calculator. Calculate your UAF CGPA and academic division based on the official 4.0 scale.',
+  },
+};
+
+const customSeo = keywordOverrides[u.slug];
+const seoTitle = customSeo ? customSeo.title : `${u.name} CGPA Calculator — ${u.shortName} GPA | MyCGPA`;
+const seoDescription = customSeo ? customSeo.description : `Free CGPA calculator for ${u.name} (${u.shortName}). Uses the official ${gradingSystem?.shortName ?? 'university'} grading system. Instantly calculate your ${u.shortName} CGPA online.`;
 ---
 
 <Layout
-  title={`${u.name} CGPA Calculator — ${u.shortName} GPA | MyCGPA`}
-  description={`Free CGPA calculator for ${u.name} (${u.shortName}). Uses the official ${gradingSystem?.shortName ?? 'university'} grading system. Instantly calculate your ${u.shortName} CGPA online.`}
+  title={seoTitle}
+  description={seoDescription}
   canonical={`/universities/${u.slug}`}
   schema={[faqSchema, breadcrumbSchema]}
 >

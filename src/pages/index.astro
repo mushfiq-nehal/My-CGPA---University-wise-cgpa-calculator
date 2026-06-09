@@ -4,6 +4,7 @@ import Hero from '../components/Hero.astro';
 import Calculator from '../components/Calculator.astro';
 import FormulaSection from '../components/FormulaSection.astro';
 import UniversitiesPreview from '../components/UniversitiesPreview.astro';
+import SeoContent from '../components/SeoContent.astro';
 
 const schema = {
   '@context': 'https://schema.org',
@@ -38,6 +39,7 @@ const schema = {
   <Calculator />
   <FormulaSection />
   <UniversitiesPreview />
+  <SeoContent />
   <script>
     // Scroll to the calculator section by default when no specific hash is set
     if (!window.location.hash) {
