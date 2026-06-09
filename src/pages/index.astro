@@ -5,28 +5,67 @@ import Calculator from '../components/Calculator.astro';
 import FormulaSection from '../components/FormulaSection.astro';
 import UniversitiesPreview from '../components/UniversitiesPreview.astro';
 import SeoContent from '../components/SeoContent.astro';
+import FaqSection from '../components/FaqSection.astro';
+
+const faqs = [
+  {
+    question: "how to calculator cgpa",
+    displayQuestion: "How to Calculator CGPA?",
+    answer: "To calculate CGPA (Cumulative Grade Point Average), select your university's grading system, enter the credit hours and grade points for each course/semester, and compute. The calculator multiplies the grade points by credit hours for each course, sums the products, and divides the total by the total credit hours: <code>CGPA = Σ(Credits × Grade Points) ÷ Σ(Credits)</code>. You can use our free online calculator above to get instant results."
+  },
+  {
+    question: "how to calculate cgpa calculator",
+    displayQuestion: "How to Calculate CGPA Calculator?",
+    answer: "To compute your scores with our CGPA calculator, choose your country and university standard, input your course grades and credit hours, and click calculate. The calculator automatically converts letters to points, computes the weighted sums, and divides by the total credit weights. This ensures a fast, accurate calculation without manual errors."
+  },
+  {
+    question: "how to convert sgpa into cgpa calculator",
+    displayQuestion: "How to Convert SGPA into CGPA Calculator?",
+    answer: "To convert SGPA (Semester Grade Point Average) to CGPA, you must calculate the weighted average of all semesters. The formula is: <code>CGPA = Σ(SGPA × Semester Credits) ÷ Total Credits</code>. Since courses/semesters may have different credit weights, you cannot simply average the SGPA values. Input your SGPAs and semester credits into our tool to convert them accurately."
+  },
+  {
+    question: "how to convert gpa to cgpa calculator",
+    displayQuestion: "How to Convert GPA to CGPA Calculator?",
+    answer: "To convert GPA to CGPA, input your semester GPA scores along with the total credit hours earned in each corresponding semester. The calculator processes the weighted average by multiplying each semester GPA by its credits, summing the products, and dividing by the total sum of credit hours to calculate your final CGPA."
+  },
+  {
+    question: "how to convert cgpa to percentage calculator",
+    displayQuestion: "How to Convert CGPA to Percentage Calculator?",
+    answer: "To convert CGPA to a percentage, multiply your CGPA by the factor specified by your academic board. For CBSE/UGC in India, the formula is: <code>Percentage = CGPA × 9.5</code> (e.g., an 8.0 CGPA equals 76%). In other systems, it is <code>CGPA × 10</code>. Use our built-in percentage converter mode to calculate this automatically."
+  },
+  {
+    question: "how to convert percentage to cgpa calculator",
+    displayQuestion: "How to Convert Percentage to CGPA Calculator?",
+    answer: "To convert a percentage score to CGPA, divide the percentage by the conversion factor set by your university (usually 9.5 or 10). For example, on a CBSE 10-point scale, a 76% score divided by 9.5 yields a CGPA of approximately 8.0. Our percentage-to-CGPA converter tab makes this translation instantly based on your chosen grading system."
+  },
+  {
+    question: "what is total credit in cgpa calculator",
+    displayQuestion: "What is Total Credit in CGPA Calculator?",
+    answer: "In a CGPA calculator, the total credit is the sum of all credit hours or course weightings completed across all semesters. It is the denominator in the CGPA equation: <code>CGPA = Total Grade Points Earned ÷ Total Credit Hours</code>. Courses with higher credits have a greater impact on your cumulative average."
+  },
+  {
+    question: "What is CGPA?",
+    displayQuestion: "What is CGPA?",
+    answer: "CGPA (Cumulative Grade Point Average) is the weighted average of all semester GPAs, calculated using the formula: <code>CGPA = Σ(Credit Hours × Grade Point) ÷ Σ(Credit Hours)</code>."
+  },
+  {
+    question: "How do I calculate CGPA?",
+    displayQuestion: "How do I calculate CGPA?",
+    answer: "To calculate CGPA: 1) For each course, multiply credit hours by grade point. 2) Sum all these products. 3) Divide by total credit hours. Use our free calculator above for instant results."
+  }
+];
 
 const schema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
-  mainEntity: [
-    {
-      '@type': 'Question',
-      name: 'What is CGPA?',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: 'CGPA (Cumulative Grade Point Average) is the weighted average of all semester GPAs, calculated using the formula: CGPA = Σ(Credit Hours × Grade Point) ÷ Σ(Credit Hours).',
-      },
+  mainEntity: faqs.map(f => ({
+    '@type': 'Question',
+    name: f.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: `<p>${f.answer}</p>`,
     },
-    {
-      '@type': 'Question',
-      name: 'How do I calculate CGPA?',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: 'To calculate CGPA: 1) For each course, multiply credit hours by grade point. 2) Sum all these products. 3) Divide by total credit hours. Use our free calculator above for instant results.',
-      },
-    },
-  ],
+  })),
 };
 ---
 
@@ -40,6 +79,7 @@ const schema = {
   <FormulaSection />
   <UniversitiesPreview />
   <SeoContent />
+  <FaqSection faqs={faqs} />
   <script>
     // Scroll to the calculator section by default when no specific hash is set
     if (!window.location.hash) {
@@ -50,3 +90,4 @@ const schema = {
     }
   </script>
 </Layout>
+
