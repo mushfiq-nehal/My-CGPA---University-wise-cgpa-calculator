@@ -145,6 +145,7 @@ const faqs = [
     background-color: var(--color-canvas);
     border-top: 1px solid var(--color-hairline);
     border-bottom: 1px solid var(--color-hairline);
+    overflow-x: hidden;
   }
 
   .section-header {
@@ -173,12 +174,14 @@ const faqs = [
     gap: var(--spacing-xl);
     margin-bottom: var(--spacing-3xl);
     align-items: start;
+    min-width: 0;
   }
 
   .formula-code-card {
     background: #171717;
     border-radius: var(--radius-md);
     overflow: hidden;
+    min-width: 0;
   }
 
   .formula-code-header {
@@ -208,6 +211,9 @@ const faqs = [
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .formula-math {
@@ -220,6 +226,8 @@ const faqs = [
     margin: 0;
     flex-wrap: wrap;
     justify-content: center;
+    min-width: 0;
+    max-width: 100%;
   }
 
   .formula-fraction {
@@ -227,13 +235,18 @@ const faqs = [
     flex-direction: column;
     align-items: center;
     gap: 4px;
+    min-width: 0;
+    max-width: 100%;
   }
 
   .formula-num, .formula-den {
     font-family: var(--font-mono);
     font-size: 13px;
     color: var(--color-cyan);
-    white-space: nowrap;
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    text-align: center;
   }
 
   .formula-line {
@@ -252,6 +265,7 @@ const faqs = [
     display: flex;
     flex-direction: column;
     gap: var(--spacing-md);
+    min-width: 0;
   }
 
   .example-label { color: var(--color-mute); }
@@ -297,6 +311,9 @@ const faqs = [
     font-size: 14px;
     color: var(--color-body);
     font-family: var(--font-mono);
+    overflow-wrap: break-word;
+    word-break: break-all;
+    min-width: 0;
   }
 
   .example-result-value {
@@ -387,6 +404,8 @@ const faqs = [
     font-size: 15px;
     color: var(--color-body);
     line-height: 1.7;
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
 
   @media (max-width: 899px) {
