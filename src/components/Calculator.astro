@@ -23,10 +23,10 @@ const systemsJson = JSON.stringify(ALL_GRADING_SYSTEMS);
       <!-- Controls row -->
       <div class="calc-controls">
         <div class="mode-tabs" role="tablist" aria-label="Calculator mode">
-          <button class="mode-tab mode-tab--active" role="tab" aria-selected="true" aria-controls="panel-gpa" id="tab-gpa" data-mode="gpa">
+          <button class="mode-tab" role="tab" aria-selected="false" aria-controls="panel-gpa" id="tab-gpa" data-mode="gpa">
             Semester GPA
           </button>
-          <button class="mode-tab" role="tab" aria-selected="false" aria-controls="panel-cgpa" id="tab-cgpa" data-mode="cgpa">
+          <button class="mode-tab mode-tab--active" role="tab" aria-selected="true" aria-controls="panel-cgpa" id="tab-cgpa" data-mode="cgpa">
             CGPA Calculator
           </button>
           <button class="mode-tab" role="tab" aria-selected="false" aria-controls="panel-converter" id="tab-converter" data-mode="converter">
@@ -44,7 +44,7 @@ const systemsJson = JSON.stringify(ALL_GRADING_SYSTEMS);
       </div>
 
       <!-- GPA Panel -->
-      <div class="calc-panel" id="panel-gpa" role="tabpanel" aria-labelledby="tab-gpa">
+      <div class="calc-panel calc-panel--hidden" id="panel-gpa" role="tabpanel" aria-labelledby="tab-gpa" hidden>
         <div class="table-wrap">
           <table class="calc-table" id="gpa-table" aria-label="Course list">
             <thead>
@@ -86,7 +86,7 @@ const systemsJson = JSON.stringify(ALL_GRADING_SYSTEMS);
       </div>
 
       <!-- CGPA Panel -->
-      <div class="calc-panel calc-panel--hidden" id="panel-cgpa" role="tabpanel" aria-labelledby="tab-cgpa" hidden>
+      <div class="calc-panel" id="panel-cgpa" role="tabpanel" aria-labelledby="tab-cgpa">
         <div class="table-wrap">
           <table class="calc-table" id="cgpa-table" aria-label="Semester list">
             <thead>
@@ -299,11 +299,27 @@ const systemsJson = JSON.stringify(ALL_GRADING_SYSTEMS);
     letter-spacing: -0.28px;
   }
 
+  .mode-tab:hover:not(.mode-tab--active) {
+    color: var(--color-ink);
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  .dark .mode-tab:hover:not(.mode-tab--active),
+  :global(.dark) .mode-tab:hover:not(.mode-tab--active) {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
   .mode-tab--active {
     background: var(--color-canvas);
     color: var(--color-ink);
     font-weight: 500;
     box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+
+  .dark .mode-tab--active,
+  :global(.dark) .mode-tab--active {
+    background: var(--color-canvas-soft-2);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
   }
 
   .system-selector-wrap {
@@ -379,8 +395,8 @@ const systemsJson = JSON.stringify(ALL_GRADING_SYSTEMS);
     border-bottom: none;
   }
 
-  .calc-table input,
-  .calc-table select {
+  .calc-table :global(input),
+  .calc-table :global(select) {
     width: 100%;
     height: 36px;
     padding: 0 var(--spacing-xs);
@@ -395,16 +411,32 @@ const systemsJson = JSON.stringify(ALL_GRADING_SYSTEMS);
     min-width: 60px;
   }
 
-  .calc-table input:focus,
-  .calc-table select:focus {
+  /* Style options inside selects to prevent bad contrast in dark mode */
+  .calc-table :global(select option) {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+  }
+
+  :global(.dark) .calc-table :global(select option) {
+    background-color: var(--color-canvas-soft-2);
+    color: var(--color-ink);
+  }
+
+  /* Force browser native dropdowns to follow dark theme */
+  :global(.dark) .calc-table :global(select) {
+    color-scheme: dark;
+  }
+
+  .calc-table :global(input:focus),
+  .calc-table :global(select:focus) {
     border-color: var(--color-ink);
   }
 
-  .calc-table input[type="text"] { min-width: 140px; }
-  .calc-table input[type="number"] { min-width: 80px; }
-  .calc-table select { min-width: 90px; }
+  .calc-table :global(input[type="text"]) { min-width: 140px; }
+  .calc-table :global(input[type="number"]) { min-width: 80px; }
+  .calc-table :global(select) { min-width: 90px; }
 
-  .remove-row-btn {
+  :global(.remove-row-btn) {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -419,7 +451,7 @@ const systemsJson = JSON.stringify(ALL_GRADING_SYSTEMS);
     flex-shrink: 0;
   }
 
-  .remove-row-btn:hover {
+  :global(.remove-row-btn:hover) {
     color: var(--color-error);
     border-color: var(--color-error);
     background: var(--color-error-soft);
@@ -683,6 +715,7 @@ const systemsJson = JSON.stringify(ALL_GRADING_SYSTEMS);
     margin: 0;
     line-height: 1.4;
     word-break: break-all;
+    white-space: pre-line;
   }
 
   @media (max-width: 768px) {
@@ -692,12 +725,79 @@ const systemsJson = JSON.stringify(ALL_GRADING_SYSTEMS);
   }
 
   @media (max-width: 599px) {
+    .calc-panel {
+      padding: var(--spacing-md);
+      gap: var(--spacing-sm);
+    }
+
     .calc-controls {
       flex-direction: column;
       align-items: flex-start;
+      padding: var(--spacing-md);
     }
 
-    .result-value { font-size: 32px; }
+    .calc-table th {
+      padding: var(--spacing-xs) var(--spacing-xxs);
+      font-size: 10px;
+    }
+
+    .calc-table td {
+      padding: var(--spacing-xs) var(--spacing-xxs);
+    }
+
+    .calc-table input,
+    .calc-table select {
+      height: 34px;
+      padding: 0 var(--spacing-xxs);
+      font-size: 13px;
+    }
+
+    .calc-table input[type="text"] {
+      min-width: 90px;
+    }
+    .calc-table input[type="number"] {
+      min-width: 50px;
+    }
+    .calc-table select {
+      min-width: 75px;
+    }
+
+    .result-display {
+      padding: var(--spacing-md);
+    }
+
+    .result-inner {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: var(--spacing-xs);
+    }
+
+    .result-label {
+      margin-right: 0;
+    }
+
+    .result-value {
+      font-size: 32px;
+    }
+
+    .add-row-btn {
+      width: 100%;
+      justify-content: center;
+      height: 40px;
+    }
+
+    .calc-actions {
+      justify-content: stretch;
+      width: 100%;
+    }
+
+    .btn-download {
+      width: 100%;
+      justify-content: center;
+      height: 38px;
+      font-size: 14px;
+    }
   }
 
   /* (Removed print media queries as direct PDF downloads are handled via jsPDF) */
