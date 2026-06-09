@@ -24,12 +24,28 @@ const countries: Country[] = ['BD', 'IN', 'PK'];
       </div>
     </div>
 
+    <!-- Country jump navigation -->
+    <nav class="country-jumpnav" aria-label="Jump to country">
+      <div class="container-page country-jumpnav-inner">
+        {countries.map((country) => {
+          const unis = getUniversitiesByCountry(country);
+          if (!unis.length) return null;
+          return (
+            <a href={`#country-${country.toLowerCase()}`} class="jumpnav-pill">
+              {COUNTRY_NAMES[country]}
+              <span class="jumpnav-count">{unis.length}</span>
+            </a>
+          );
+        })}
+      </div>
+    </nav>
+
     <div class="container-page unis-content">
       {countries.map((country) => {
         const unis = getUniversitiesByCountry(country);
         if (!unis.length) return null;
         return (
-          <div class="country-section">
+          <div class="country-section" id={`country-${country.toLowerCase()}`}>
             <div class="country-header">
               <h2 class="display-md country-title">{COUNTRY_NAMES[country]}</h2>
               <span class="country-count caption-mono">{unis.length} {unis.length === 1 ? 'university' : 'universities'}</span>
@@ -106,4 +122,106 @@ const countries: Country[] = ['BD', 'IN', 'PK'];
   @media (max-width: 599px) {
     .unis-grid { grid-template-columns: 1fr; }
   }
+
+  /* Country jump navigation */
+  .country-jumpnav {
+    position: sticky;
+    top: 64px; /* below the navbar */
+    z-index: 10;
+    background: color-mix(in srgb, var(--color-canvas) 88%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  @media (max-width: 599px) {
+    .country-jumpnav { top: 56px; }
+  }
+
+  .country-jumpnav-inner {
+    display: flex;
+    gap: var(--spacing-xs, 0.5rem);
+    padding-block: 0.625rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .country-jumpnav-inner::-webkit-scrollbar { display: none; }
+
+  .jumpnav-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    white-space: nowrap;
+    scroll-snap-align: start;
+    padding: 0.4rem 1rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-hairline);
+    background: var(--color-surface);
+    color: var(--color-body);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.18s, color 0.18s, border-color 0.18s, box-shadow 0.18s;
+  }
+
+  .jumpnav-pill:hover {
+    background: var(--color-ink);
+    color: var(--color-canvas);
+    border-color: var(--color-ink);
+  }
+
+  .jumpnav-pill.is-active {
+    background: var(--color-ink);
+    color: var(--color-canvas);
+    border-color: var(--color-ink);
+    box-shadow: 0 2px 10px color-mix(in srgb, var(--color-ink) 20%, transparent);
+  }
+
+  .jumpnav-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 600;
+    background: color-mix(in srgb, currentColor 15%, transparent);
+    border-radius: 999px;
+    padding: 0.05em 0.5em;
+    min-width: 1.4em;
+    line-height: 1.6;
+  }
+
+  /* Offset anchor targets so sticky navbar (64px) + jump-nav (~44px) + buffer don't cover sections */
+  .country-section {
+    scroll-margin-top: 7rem;
+  }
+
+  @media (max-width: 599px) {
+    /* Mobile navbar is 56px, jump-nav same height */
+    .country-section { scroll-margin-top: 6.5rem; }
+  }
 </style>
+
+<script>
+  // Highlight the active country pill as user scrolls
+  const pills = document.querySelectorAll<HTMLAnchorElement>('.jumpnav-pill');
+  const sections = document.querySelectorAll<HTMLElement>('.country-section[id]');
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          pills.forEach(pill => {
+            const active = pill.getAttribute('href') === `#${id}`;
+            pill.classList.toggle('is-active', active);
+          });
+        }
+      }
+    },
+    { rootMargin: '-20% 0px -70% 0px', threshold: 0 }
+  );
+
+  sections.forEach(s => observer.observe(s));
+</script>
