@@ -41,6 +41,7 @@ const footerColumns = [
       { href: '/about', label: 'About Us' },
       { href: '/contact', label: 'Contact Us' },
       { href: '/privacy', label: 'Privacy Policy' },
+      { href: '/cookies', label: 'Cookie Policy' },
       { href: '/terms', label: 'Terms & Conditions' },
     ],
   },
@@ -81,9 +82,12 @@ const footerColumns = [
       <p class="footer-copyright">
         &copy; {new Date().getFullYear()} MyCGPA.com. All rights reserved.
       </p>
-      <p class="footer-note">
-        Built for students in Bangladesh, India &amp; Pakistan.
-      </p>
+      <div class="footer-bottom-right">
+        <button type="button" class="footer-cookie-btn" id="footer-cookie-settings">Cookie Settings</button>
+        <p class="footer-note">
+          Built by <a href="https://www.mushfiqnehal.dev/" class="footer-note-link" target="_blank" rel="noopener noreferrer">Mushfiq Nehal</a> for students in Bangladesh, India &amp; Pakistan.
+        </p>
+      </div>
     </div>
   </div>
 </footer>
@@ -193,6 +197,37 @@ const footerColumns = [
     margin: 0;
   }
 
+  .footer-bottom-right {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+  }
+
+  .footer-cookie-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 12px;
+    color: var(--color-mute);
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color 0.15s ease;
+  }
+
+  .footer-cookie-btn:hover {
+    color: var(--color-ink);
+  }
+
+  .footer-note-link {
+    color: var(--color-mute);
+    transition: color 0.15s ease;
+  }
+
+  .footer-note-link:hover {
+    color: var(--color-ink);
+  }
+
   @media (max-width: 899px) {
     .footer-top {
       grid-template-columns: 1fr;
@@ -216,3 +251,9 @@ const footerColumns = [
     }
   }
 </style>
+
+<script>
+  document.getElementById('footer-cookie-settings')?.addEventListener('click', () => {
+    window.dispatchEvent(new Event('open-cookie-settings'));
+  });
+</script>

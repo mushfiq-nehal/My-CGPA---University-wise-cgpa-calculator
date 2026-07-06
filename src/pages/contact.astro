@@ -73,6 +73,21 @@ import Layout from '../layouts/Layout.astro';
                   </p>
                 </div>
               </div>
+
+              <div class="method-item">
+                <div class="method-icon" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="8" r="4"></circle>
+                    <path d="M4 21c0-4 4-6 8-6s8 2 8 6"></path>
+                  </svg>
+                </div>
+                <div class="method-details">
+                  <h3 class="caption-mono">Developer</h3>
+                  <p class="body-sm text-body">
+                    MyCGPA is built and maintained by <a href="https://www.mushfiqnehal.dev/" class="inline-link" target="_blank" rel="noopener noreferrer">Mushfiq Nehal</a>, a full-stack software engineer. Reach out directly at <a href="mailto:hello@mushfiqnehal.dev" class="inline-link">hello@mushfiqnehal.dev</a>.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -288,6 +303,16 @@ import Layout from '../layouts/Layout.astro';
 
   .text-body {
     color: var(--color-body);
+  }
+
+  .inline-link {
+    color: var(--color-link);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .inline-link:hover {
+    text-decoration: underline;
   }
 
   /* Form Section */

@@ -1,10 +1,21 @@
 ---
 import Layout from '../layouts/Layout.astro';
+
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Mushfiq Nehal',
+  url: 'https://www.mushfiqnehal.dev/',
+  email: 'hello@mushfiqnehal.dev',
+  jobTitle: 'Software Engineer (Full Stack)',
+  sameAs: ['https://www.mushfiqnehal.dev/'],
+};
 ---
 
 <Layout
   title="About Us — Academic Calculators | MyCGPA"
   description="Learn about MyCGPA, our mission to simplify grade tracking for students worldwide, and our values of accuracy, privacy, and simplicity."
+  schema={personSchema}
 >
   <div class="about-page">
     <div class="mesh-gradient" aria-hidden="true"></div>
@@ -96,6 +107,28 @@ import Layout from '../layouts/Layout.astro';
           <p class="body-sm">
             From the UGC scale in Bangladesh, to IITs in India, and HEC standards in Pakistan, we aim to cover all major universities and grading systems.
           </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Meet the Developer -->
+    <section class="about-developer container-page">
+      <div class="developer-card card-level-2">
+        <div class="developer-avatar" aria-hidden="true">MN</div>
+        <div class="developer-info">
+          <span class="caption-mono developer-eyebrow">Built &amp; maintained by</span>
+          <h2 class="display-md developer-name">Mushfiq Nehal</h2>
+          <p class="body-md developer-desc">
+            Full-stack software engineer and researcher who builds and personally maintains MyCGPA, keeping university grading templates accurate and up to date.
+          </p>
+          <div class="developer-links">
+            <a href="https://www.mushfiqnehal.dev/" class="developer-link" target="_blank" rel="noopener noreferrer">
+              Portfolio &amp; work
+            </a>
+            <a href="mailto:hello@mushfiqnehal.dev" class="developer-link">
+              hello@mushfiqnehal.dev
+            </a>
+          </div>
         </div>
       </div>
     </section>
@@ -228,6 +261,77 @@ import Layout from '../layouts/Layout.astro';
     line-height: 1.6;
   }
 
+  /* Meet the Developer */
+  .about-developer {
+    margin-top: var(--spacing-4xl);
+  }
+
+  .developer-card {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-xl);
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-2xl);
+    border: 1px solid var(--color-hairline);
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .developer-avatar {
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-full);
+    background-color: var(--color-link-bg-soft);
+    color: var(--color-link);
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+  }
+
+  .developer-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xxs);
+  }
+
+  .developer-eyebrow {
+    color: var(--color-mute);
+  }
+
+  .developer-name {
+    margin: 0;
+    color: var(--color-ink);
+  }
+
+  .developer-desc {
+    margin: var(--spacing-xs) 0 var(--spacing-sm) 0;
+    color: var(--color-body);
+    line-height: 1.6;
+    max-width: 560px;
+  }
+
+  .developer-links {
+    display: flex;
+    gap: var(--spacing-lg);
+    flex-wrap: wrap;
+  }
+
+  .developer-link {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-link);
+    text-decoration: none;
+  }
+
+  .developer-link:hover {
+    text-decoration: underline;
+  }
+
   /* CTA */
   .about-cta {
     margin-top: var(--spacing-4xl);
@@ -314,6 +418,12 @@ import Layout from '../layouts/Layout.astro';
     
     .about-hero {
       padding-top: var(--spacing-2xl);
+    }
+
+    .developer-card {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: var(--spacing-lg);
     }
   }
 
