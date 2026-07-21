@@ -13,6 +13,7 @@ interface Props {
   ogImage?: string;
   ogImageAlt?: string;
   schema?: object | object[];
+  noindex?: boolean;
 }
 
 const {
@@ -24,6 +25,7 @@ const {
   ogImage = '/og-image.png',
   ogImageAlt = 'MyCGPA — Calculate GPA & CGPA Instantly',
   schema,
+  noindex = false,
 } = Astro.props;
 
 const canonicalURL = canonical
@@ -32,23 +34,34 @@ const canonicalURL = canonical
 
 const resolvedOgImage = new URL(ogImage, Astro.site);
 
+// No potentialAction/SearchAction: the site has no ?q= search endpoint, and
+// declaring one that doesn't resolve is invalid markup.
 const websiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: 'MyCGPA',
-  url: 'https://mycgpa.com',
+  url: 'https://mycgpa.com/',
   description: 'Free CGPA and GPA calculators for students worldwide',
-  potentialAction: {
-    '@type': 'SearchAction',
-    target: 'https://mycgpa.com/universities?q={search_term_string}',
-    'query-input': 'required name=search_term_string',
-  },
 };
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
+    <!-- MUST stay first: the HTML spec's encoding pre-scan only reads the first
+         1024 bytes, and the tag/analytics scripts below are far larger than that. -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Fonts: linked (not @import-ed from CSS) so the browser can start the
+         fetch immediately instead of waiting for global.css to parse. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap"
+    />
+
     <!-- Google Consent Mode v2: default to denied only where GDPR/UK-GDPR/CH-DPA
          apply (EEA + UK + Switzerland). Everywhere else defaults to granted,
          since opt-in-by-default is not required there and was tanking GA
@@ -110,8 +123,6 @@ const websiteSchema = {
         document.documentElement.classList.remove('dark');
       }
     </script>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -123,7 +134,9 @@ const websiteSchema = {
     <!-- Primary SEO -->
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonicalURL.href} />
+    {noindex
+      ? <meta name="robots" content="noindex, follow" />
+      : <link rel="canonical" href={canonicalURL.href} />}
     <link rel="sitemap" href="/sitemap.xml" />
 
     <!-- Open Graph -->

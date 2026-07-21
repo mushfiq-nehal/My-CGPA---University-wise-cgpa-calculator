@@ -9,49 +9,36 @@ import FaqSection from '../components/FaqSection.astro';
 
 const faqs = [
   {
-    question: "how to calculator cgpa",
-    displayQuestion: "How to Calculator CGPA?",
-    answer: "To calculate CGPA (Cumulative Grade Point Average), select your university's grading system, enter the credit hours and grade points for each course/semester, and compute. The calculator multiplies the grade points by credit hours for each course, sums the products, and divides the total by the total credit hours: <code>CGPA = Σ(Credits × Grade Points) ÷ Σ(Credits)</code>. You can use our free online calculator above to get instant results."
-  },
-  {
-    question: "how to calculate cgpa calculator",
-    displayQuestion: "How to Calculate CGPA Calculator?",
-    answer: "To compute your scores with our CGPA calculator, choose your country and university standard, input your course grades and credit hours, and click calculate. The calculator automatically converts letters to points, computes the weighted sums, and divides by the total credit weights. This ensures a fast, accurate calculation without manual errors."
-  },
-  {
-    question: "how to convert sgpa into cgpa calculator",
-    displayQuestion: "How to Convert SGPA into CGPA Calculator?",
-    answer: "To convert SGPA (Semester Grade Point Average) to CGPA, you must calculate the weighted average of all semesters. The formula is: <code>CGPA = Σ(SGPA × Semester Credits) ÷ Total Credits</code>. Since courses/semesters may have different credit weights, you cannot simply average the SGPA values. Input your SGPAs and semester credits into our tool to convert them accurately."
-  },
-  {
-    question: "how to convert gpa to cgpa calculator",
-    displayQuestion: "How to Convert GPA to CGPA Calculator?",
-    answer: "To convert GPA to CGPA, input your semester GPA scores along with the total credit hours earned in each corresponding semester. The calculator processes the weighted average by multiplying each semester GPA by its credits, summing the products, and dividing by the total sum of credit hours to calculate your final CGPA."
-  },
-  {
-    question: "how to convert cgpa to percentage calculator",
-    displayQuestion: "How to Convert CGPA to Percentage Calculator?",
-    answer: "To convert CGPA to a percentage, multiply your CGPA by the factor specified by your academic board. For CBSE/UGC in India, the formula is: <code>Percentage = CGPA × 9.5</code> (e.g., an 8.0 CGPA equals 76%). In other systems, it is <code>CGPA × 10</code>. Use our built-in percentage converter mode to calculate this automatically."
-  },
-  {
-    question: "how to convert percentage to cgpa calculator",
-    displayQuestion: "How to Convert Percentage to CGPA Calculator?",
-    answer: "To convert a percentage score to CGPA, divide the percentage by the conversion factor set by your university (usually 9.5 or 10). For example, on a CBSE 10-point scale, a 76% score divided by 9.5 yields a CGPA of approximately 8.0. Our percentage-to-CGPA converter tab makes this translation instantly based on your chosen grading system."
-  },
-  {
-    question: "what is total credit in cgpa calculator",
-    displayQuestion: "What is Total Credit in CGPA Calculator?",
-    answer: "In a CGPA calculator, the total credit is the sum of all credit hours or course weightings completed across all semesters. It is the denominator in the CGPA equation: <code>CGPA = Total Grade Points Earned ÷ Total Credit Hours</code>. Courses with higher credits have a greater impact on your cumulative average."
-  },
-  {
     question: "What is CGPA?",
-    displayQuestion: "What is CGPA?",
-    answer: "CGPA (Cumulative Grade Point Average) is the weighted average of all semester GPAs, calculated using the formula: <code>CGPA = Σ(Credit Hours × Grade Point) ÷ Σ(Credit Hours)</code>."
+    answer: "CGPA stands for Cumulative Grade Point Average — the weighted average of every graded course you have completed, across all semesters. Each course grade becomes a grade point, weighted by that course's credit hours, so a 4-credit course affects your CGPA twice as much as a 2-credit one: <code>CGPA = Σ(Credit Hours × Grade Point) ÷ Σ(Credit Hours)</code>."
   },
   {
-    question: "How do I calculate CGPA?",
-    displayQuestion: "How do I calculate CGPA?",
-    answer: "To calculate CGPA: 1) For each course, multiply credit hours by grade point. 2) Sum all these products. 3) Divide by total credit hours. Use our free calculator above for instant results."
+    question: "How do I calculate my CGPA?",
+    answer: "Multiply each course's grade point by its credit hours, add up all those products, then divide by your total credit hours: <code>CGPA = Σ(Credits × Grade Points) ÷ Σ(Credits)</code>. For example, an A (4.00) in a 3-credit course and a B (3.00) in a 2-credit course gives (4.00×3 + 3.00×2) ÷ 5 = 3.60. Because grading scales differ between universities, pick your institution above so the right letter-to-point mapping is applied."
+  },
+  {
+    question: "How do I use this calculator?",
+    answer: "Choose your country and university, then enter each course's grade and credit hours. The calculator converts letters to grade points using your university's official scale, computes the weighted total, and divides by your total credits. You can add or remove courses at any time, and download the result as a PDF report."
+  },
+  {
+    question: "How do I convert SGPA to CGPA?",
+    answer: "Take the weighted average of your semester GPAs, using each semester's credit total as the weight: <code>CGPA = Σ(SGPA × Semester Credits) ÷ Total Credits</code>. You cannot simply average your SGPA values unless every semester carried exactly the same number of credits — a heavier semester should pull the average further."
+  },
+  {
+    question: "How do I convert semester GPA to CGPA?",
+    answer: "Enter each semester's GPA alongside the credit hours you earned that semester. The calculator multiplies each GPA by its credits, sums the results, and divides by your total credits. A single semester's GPA reflects only that term; CGPA reflects your whole academic record to date."
+  },
+  {
+    question: "How do I convert CGPA to a percentage?",
+    answer: "Multiply your CGPA by the conversion factor your academic board specifies. Under CBSE and UGC guidelines in India the factor is 9.5, so a CGPA of 8.0 is about 76%. Some institutions use a factor of 10 instead, and on a 4.0 scale a common approximation is CGPA × 25. Check your own university's rule before quoting a figure on an application — these factors are approximations, not official equivalences."
+  },
+  {
+    question: "How do I convert a percentage to CGPA?",
+    answer: "Divide your percentage by the same conversion factor your board uses. On a 10-point CBSE scale, 76% ÷ 9.5 gives a CGPA of roughly 8.0. As with the reverse conversion, the result is an approximation — universities differ in how they map percentages onto grade points."
+  },
+  {
+    question: "What are credit hours, and why do they matter?",
+    answer: "Credit hours measure how much weight a course carries, usually reflecting its contact hours per week. They are the denominator in the CGPA formula, which means a high grade in a 4-credit course lifts your CGPA considerably more than the same grade in a 1-credit course. This is also why dropping a heavily weighted course can shift your average more than you would expect."
   }
 ];
 
@@ -63,7 +50,7 @@ const schema = {
     name: f.question,
     acceptedAnswer: {
       '@type': 'Answer',
-      text: `<p>${f.answer}</p>`,
+      text: f.answer,
     },
   })),
 };

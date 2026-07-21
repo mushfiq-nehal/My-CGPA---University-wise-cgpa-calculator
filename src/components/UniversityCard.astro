@@ -9,7 +9,7 @@ const { university: u } = Astro.props;
 const countryLabel = COUNTRY_NAMES[u.country];
 ---
 
-<a href={`/universities/${u.slug}`} class="uni-card" aria-label={`${u.name} CGPA Calculator`}>
+<a href={`/universities/${u.slug}/`} class="uni-card" aria-label={`${u.name} CGPA Calculator`}>
   <div class="uni-card-header">
     <div class="uni-abbr" aria-hidden="true">{u.shortName}</div>
     <span class="uni-country-badge">{countryLabel}</span>

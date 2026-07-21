@@ -5,6 +5,7 @@ import Layout from '../layouts/Layout.astro';
 <Layout
   title="404 — Page Not Found | MyCGPA"
   description="The page you are looking for does not exist on MyCGPA. Search for grading systems or calculate your CGPA instantly."
+  noindex
 >
   <div class="error-container">
     <div class="mesh-gradient" aria-hidden="true"></div>
@@ -26,7 +27,7 @@ import Layout from '../layouts/Layout.astro';
         <a href="/" class="btn-primary-custom">
           Back to Home
         </a>
-        <a href="/universities" class="btn-secondary-custom">
+        <a href="/universities/" class="btn-secondary-custom">
           Explore Universities
         </a>
       </div>

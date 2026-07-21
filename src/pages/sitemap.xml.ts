@@ -10,6 +10,7 @@ export const GET: APIRoute = ({ site }) => {
     '/',
     '/about/',
     '/contact/',
+    '/cookies/',
     '/privacy/',
     '/terms/',
     '/universities/',
@@ -19,8 +20,9 @@ export const GET: APIRoute = ({ site }) => {
   const universityPages = UNIVERSITIES.map((u) => `/universities/${u.slug}/`);
   const allPages = [...staticPages, ...universityPages];
 
-  // Get current date for lastmod (YYYY-MM-DD)
-  const currentDate = new Date().toISOString().split('T')[0];
+  // No <lastmod>: it would be the build timestamp on every URL, telling Google
+  // all 36 pages changed on every deploy. Google discounts lastmod when it
+  // behaves like that, so omitting it is more useful than faking it.
 
   // Generate XML
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -30,7 +32,6 @@ export const GET: APIRoute = ({ site }) => {
       (page) => `
   <url>
     <loc>${baseUrl}${page}</loc>
-    <lastmod>${currentDate}</lastmod>
     <changefreq>${page === '/' ? 'daily' : 'monthly'}</changefreq>
     <priority>${page === '/' ? '1.0' : page.startsWith('/universities/') ? '0.8' : '0.5'}</priority>
   </url>`

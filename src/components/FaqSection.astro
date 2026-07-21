@@ -1,7 +1,8 @@
 ---
+// One `question` field only: a separate schema-vs-display string invites the
+// two to drift apart, which is a structured-data mismatch.
 interface FaqItem {
   question: string;
-  displayQuestion: string;
   answer: string;
 }
 
@@ -25,7 +26,7 @@ const { faqs } = Astro.props;
         {faqs.map((f, i) => (
           <details class="faq-item" id={`faq-item-${i}`}>
             <summary class="faq-question">
-              <span>{f.displayQuestion}</span>
+              <span>{f.question}</span>
               <svg class="faq-arrow" width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                 <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>

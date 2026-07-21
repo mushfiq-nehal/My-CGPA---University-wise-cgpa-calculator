@@ -9,8 +9,7 @@
     <div class="cookie-copy">
       <p class="cookie-title">We use cookies</p>
       <p class="cookie-desc">
-        We use essential cookies to run this site, and optional analytics &amp; advertising cookies (including Google AdSense) to understand usage and show relevant ads. You can accept, reject non-essential cookies, or read our
-        <a href="/cookies">Cookie Policy</a>.
+        We use cookies for analytics and advertising. <a href="/cookies/">Learn more</a>.
       </p>
     </div>
     <div class="cookie-actions">
@@ -110,18 +109,26 @@
   }
 
   @media (max-width: 767px) {
+    /* Keep the banner well under the "intrusive interstitial" threshold: the
+       previous stacked layout ran ~320px, ~39% of a 412x823 mobile viewport. */
+    .cookie-banner {
+      padding: var(--spacing-sm);
+    }
+
     .cookie-banner-inner {
       flex-direction: column;
       align-items: stretch;
-      gap: var(--spacing-md);
+      gap: var(--spacing-sm);
+      padding: var(--spacing-md);
     }
 
     .cookie-actions {
-      flex-direction: column-reverse;
+      flex-direction: row;
     }
 
     .cookie-btn {
-      width: 100%;
+      flex: 1;
+      height: 36px;
     }
   }
 </style>
